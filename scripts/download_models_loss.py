@@ -2,7 +2,7 @@ import os
 
 ######################################################################
 ### Change this path to the directory where you cloned the repo ######
-repo_dir = "/home/ubuntu/hdd/COIGAN-controllable-object-inpainting"
+repo_dir = "/coigan/COIGAN-IROS-2024"
 ######################################################################
 
 model_path = os.path.join(repo_dir, "models_loss/ade20k/ade20k-resnet50dilated-ppm_deepsup")

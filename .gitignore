@@ -138,3 +138,6 @@ experiments_*/
 datasets/
 test_notebooks/
 models/*
+
+# sensitive files
+build_args.txt

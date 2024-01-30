@@ -4,12 +4,13 @@ RUN apt-get update
 RUN DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends software-properties-common
 RUN add-apt-repository ppa:deadsnakes/ppa
 RUN apt-get install -y python3.8 python3-pip
+
 # Update symlink to point to latest
 RUN rm /usr/bin/python3 && ln -s /usr/bin/python3.8 /usr/bin/python3
 RUN python3 --version
 RUN pip3 --version
 
-#Sistema e basilari
+# System and basic libraries
 RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
     build-essential \
     libqt5core5a \
@@ -34,14 +35,37 @@ RUN pip install torch==1.12.1+cu116 --extra-index-url https://download.pytorch.o
 RUN pip install	torchvision==0.13.1+cu116 --extra-index-url https://download.pytorch.org/whl/cu116
 
 
-#definisco l'enviroment
+#enviroment definiscion
 ENV APPDIR coigan
 WORKDIR coigan
 
 RUN cd /coigan/
-RUN git clone https://github.com/MassimilianoBiancucci/COIGAN-controllable-object-inpainting.git
-RUN pip install -e /coigan/COIGAN-controllable-object-inpainting/COIGAN/
+RUN git clone https://github.com/MassimilianoBiancucci/COIGAN-IROS-2024.git
+RUN pip install -e /coigan/COIGAN-IROS-2024/COIGAN/
 
+RUN pip install kaggle
+RUN pip install wandb
+
+# Set kaggle credentials
+# Remeber to create the build_credentials file as described in the README in "Setup the build_args file"
+ARG KAGGLE_USERNAME
+ARG KAGGLE_KEY
+ENV KAGGLE_USERNAME=${KAGGLE_USERNAME}
+ENV KAGGLE_KEY=${KAGGLE_KEY}
+
+# set wandb credentials
+# Remeber to create the build_credentials file as described in the README in "Setup the build_args file"
+ARG WANDB_API_KEY
+RUN wandb login ${WANDB_API_KEY}
+#ENV WANDB_API_KEY=${WANDB_API_KEY}
+
+# Download and prepare the severstal dataset
+RUN python3 /coigan/COIGAN-IROS-2024/scripts/prepare_severstal_dataset.py
+
+# Downloading the models used for the loss
+RUN python3 /coigan/COIGAN-IROS-2024/scripts/download_models_loss.py
+
+# Setting up the jupyter notebook
 RUN pip install jupyterlab
 
 RUN mkdir /notebooks
