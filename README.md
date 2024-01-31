@@ -50,7 +50,14 @@ docker build $(cat build_args.txt) -t coigan-iros-2024 .
 ```
 
 # Run the Docker image
-
+To run the Docker image, run the following command from the path ../COIGAN-IROS-2024/Docker:
+```bash
+docker run -it --gpus all --rm coigan-iros-2024
+```
+Or if you need to attach to the container only a subset of the system GPUs:
+```bash
+docker run -it --gpus '"device=0,1"' --rm coigan-iros-2024
+```
 
 # Run the training
 

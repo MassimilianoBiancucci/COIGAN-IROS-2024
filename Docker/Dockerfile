@@ -29,8 +29,8 @@ RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-ins
     libxcb-glx0-dev \
 	git
 
-RUN python3 --version
-RUN pip3 --version
+#RUN python3 --version
+#RUN pip3 --version
 RUN pip install torch==1.12.1+cu116 --extra-index-url https://download.pytorch.org/whl/cu116
 RUN pip install	torchvision==0.13.1+cu116 --extra-index-url https://download.pytorch.org/whl/cu116
 
@@ -39,11 +39,17 @@ RUN pip install	torchvision==0.13.1+cu116 --extra-index-url https://download.pyt
 ENV APPDIR coigan
 WORKDIR coigan
 
+# just a trigger to download the repo again without using the cache
+RUN echo "modify this string to download the new version of the repo 0001"
+
+#DEBUG ENV VARIABLES
+ENV HYDRA_FULL_ERROR=1
+
 RUN cd /coigan/
 RUN git clone https://github.com/MassimilianoBiancucci/COIGAN-IROS-2024.git
 RUN pip install -e /coigan/COIGAN-IROS-2024/COIGAN/
 
-RUN pip install kaggle
+#RUN pip install kaggle
 RUN pip install wandb
 
 # Set kaggle credentials
@@ -69,5 +75,5 @@ RUN python3 /coigan/COIGAN-IROS-2024/scripts/download_models_loss.py
 RUN pip install jupyterlab
 
 RUN mkdir /notebooks
-CMD jupyter notebook --no-browser --ip 0.0.0.0 --port 8888  --allow-root /notebooks
+#CMD jupyter notebook --no-browser --ip 0.0.0.0 --port 8888  --allow-root /notebooks
 
