@@ -27,7 +27,8 @@ RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-ins
     libxfixes-dev \
     libx11-xcb-dev \
     libxcb-glx0-dev \
-	git
+	git \
+    unzip
 
 #RUN python3 --version
 #RUN pip3 --version
@@ -40,7 +41,7 @@ ENV APPDIR coigan
 WORKDIR coigan
 
 # just a trigger to download the repo again without using the cache
-RUN echo "modify this string to download the new version of the repo 0001"
+RUN echo "modify this string to download the new version of the repo 0002"
 
 #DEBUG ENV VARIABLES
 ENV HYDRA_FULL_ERROR=1
@@ -48,8 +49,6 @@ ENV HYDRA_FULL_ERROR=1
 RUN cd /coigan/
 RUN git clone https://github.com/MassimilianoBiancucci/COIGAN-IROS-2024.git
 RUN pip install -e /coigan/COIGAN-IROS-2024/COIGAN/
-
-#RUN pip install kaggle
 RUN pip install wandb
 
 # Set kaggle credentials
@@ -63,7 +62,6 @@ ENV KAGGLE_KEY=${KAGGLE_KEY}
 # Remeber to create the build_credentials file as described in the README in "Setup the build_args file"
 ARG WANDB_API_KEY
 RUN wandb login ${WANDB_API_KEY}
-#ENV WANDB_API_KEY=${WANDB_API_KEY}
 
 # Download and prepare the severstal dataset
 RUN python3 /coigan/COIGAN-IROS-2024/scripts/prepare_severstal_dataset.py
