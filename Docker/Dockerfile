@@ -28,7 +28,8 @@ RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-ins
     libx11-xcb-dev \
     libxcb-glx0-dev \
 	git \
-    unzip
+    unzip \
+    wget
 
 #RUN python3 --version
 #RUN pip3 --version
@@ -41,7 +42,7 @@ ENV APPDIR coigan
 WORKDIR coigan
 
 # just a trigger to download the repo again without using the cache
-RUN echo "modify this string to download the new version of the repo 0002"
+RUN echo "modify this string to download the new version of the repo 0003"
 
 #DEBUG ENV VARIABLES
 ENV HYDRA_FULL_ERROR=1
