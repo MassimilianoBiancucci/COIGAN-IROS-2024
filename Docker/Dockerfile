@@ -29,7 +29,7 @@ RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-ins
     libxcb-glx0-dev \
 	git \
     unzip \
-    wget
+    wget 
 
 #RUN python3 --version
 #RUN pip3 --version
@@ -50,17 +50,20 @@ ENV HYDRA_FULL_ERROR=1
 RUN cd /coigan/
 RUN git clone https://github.com/MassimilianoBiancucci/COIGAN-IROS-2024.git
 RUN pip install -e /coigan/COIGAN-IROS-2024/COIGAN/
-RUN pip install wandb
+
+# Ninja needed for FCC model fused layers (tested ninja 1.10.1)
+RUN pip install ninja
 
 # Set kaggle credentials
-# Remeber to create the build_credentials file as described in the README in "Setup the build_args file"
+# !!! Remeber to create the build_credentials file as described in the README in "Setup the build_args file"
 ARG KAGGLE_USERNAME
 ARG KAGGLE_KEY
 ENV KAGGLE_USERNAME=${KAGGLE_USERNAME}
 ENV KAGGLE_KEY=${KAGGLE_KEY}
 
-# set wandb credentials
-# Remeber to create the build_credentials file as described in the README in "Setup the build_args file"
+# set wandb module and credentials
+# !!! Remeber to create the build_credentials file as described in the README in "Setup the build_args file"
+RUN pip install wandb
 ARG WANDB_API_KEY
 RUN wandb login ${WANDB_API_KEY}
 

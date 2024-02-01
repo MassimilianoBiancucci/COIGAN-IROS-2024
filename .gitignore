@@ -141,3 +141,6 @@ models/*
 
 # sensitive files
 build_args.txt
+
+# data
+severstal-steel-defect-detection.zip
