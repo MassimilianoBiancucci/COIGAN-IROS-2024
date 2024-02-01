@@ -79,3 +79,5 @@ RUN pip install jupyterlab
 RUN mkdir /notebooks
 #CMD jupyter notebook --no-browser --ip 0.0.0.0 --port 8888  --allow-root /notebooks
 
+#ENTRYPOINT [ "tail", "-f", "/dev/null" ]
+CMD ["bash"]

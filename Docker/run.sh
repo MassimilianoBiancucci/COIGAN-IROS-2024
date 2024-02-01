@@ -1,1 +1,1 @@
-docker run -it --gpus '"device=0,1"' --rm coigan-iros-2024
+docker run -td --gpus '"device=0,1"' coigan-iros-2024

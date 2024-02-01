@@ -6,11 +6,11 @@ run_name: ${conf_name}_${now:%d-%m-%Y_%H-%M-%S}
 checkpoint: null # path to the checkpoint file to load
 #checkpoint: /home/ubuntu/hdd/COIGAN-controllable-object-inpainting/ref_checkpoints/40000.pt
 start_iter: 0
-max_iter: 800000
+max_iter: 400000
 
-batch_size: 8 # batch size for each training process
-num_workers: 6 # dataloader workers
-prefetch: 4
+batch_size: 24 #8 # batch size for each training process
+num_workers: 18 #6 # dataloader workers
+prefetch: 12 #4
 
 gen_steps: 1 # define how many steps to train the generator before give the turn to the discriminator
 disc_steps: 1 # define how many steps to train the discriminator before give the turn to the generator
@@ -30,9 +30,9 @@ distributed: True # enable distributed training
 ################################################
 
 enable_wandb: True # enable wandb logging, if False no logging will be performed on the cloud
-log_img_interval: 500 # steps interval between each output visualization
-log_weights_interval: 500 # steps interval between each weights visualization
-checkpoint_interval: 10000 # steps interval between each checkpoint
+log_img_interval: 1000 # steps interval between each output visualization
+log_weights_interval: 1000 # steps interval between each weights visualization
+checkpoint_interval: 30000 # steps interval between each checkpoint
 
 # logging other options
 log_shapes_and_defects: False # enable the logging of input shapes and defects during the images logging

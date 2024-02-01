@@ -133,7 +133,7 @@ dmypy.json
 *.pt
 
 # all the experiments folders
-experiments/
+experiments/*
 experiments_*/
 datasets/
 test_notebooks/
@@ -141,6 +141,7 @@ models/*
 
 # sensitive files
 build_args.txt
+experiments_path.txt
 
 # data
 severstal-steel-defect-detection.zip
