@@ -68,7 +68,7 @@ ARG WANDB_API_KEY
 RUN wandb login ${WANDB_API_KEY}
 
 # Download and prepare the severstal dataset
-RUN python3 /coigan/COIGAN-IROS-2024/scripts/prepare_severstal_dataset.py
+# RUN python3 /coigan/COIGAN-IROS-2024/scripts/prepare_severstal_dataset.py
 
 # Downloading the models used for the loss
 RUN python3 /coigan/COIGAN-IROS-2024/scripts/download_models_loss.py

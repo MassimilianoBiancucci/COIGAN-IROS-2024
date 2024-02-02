@@ -135,7 +135,7 @@ dmypy.json
 # all the experiments folders
 experiments/*
 experiments_*/
-datasets/
+datasets/*
 test_notebooks/
 models/*
 

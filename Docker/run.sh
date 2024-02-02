@@ -1,1 +1,1 @@
-docker run -td --gpus '"device=1,2"' --shm-size 100g -v $(cat ./experiments_path.txt):/coigan/COIGAN-IROS-2024/experiments coigan-iros-2024
+docker-compose up -td
