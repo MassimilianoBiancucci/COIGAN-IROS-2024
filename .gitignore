@@ -142,6 +142,7 @@ models/*
 # sensitive files
 build_args.txt
 experiments_path.txt
+datasets_path.txt
 
 # data
 severstal-steel-defect-detection.zip
