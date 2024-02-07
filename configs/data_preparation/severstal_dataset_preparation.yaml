@@ -2,7 +2,7 @@
 #########################################
 # DATSET NAME
 # name of the generated dataset 
-dataset_name: test_full_train
+dataset_name: test_IROS2024
 
 # Change this to your own path of the COIGAN-controllable-object-inpainting repo
 repo_dir: /coigan/COIGAN-IROS-2024
@@ -31,8 +31,8 @@ tile_size: [256, 256] # specify the tile size, to split the images from the data
 binary: True
 
 # multiprocessing settings
-n_workers: -1 # -1 means all the available cpus
-q_size: 10
+n_workers: 24 # -1 means all the available cpus
+q_size: 12
 
 # settings for the dataset converter
 # convert the dataset to the jsonl format
@@ -63,8 +63,8 @@ split_mode: fair # specify the splitting mode, random or fair
 dataset_splitter_kwargs:
   dataset_path: ${jsonl_dataset_dir}
   output_dir: ${dataset_dir}/${dataset_name}
-  train_ratio: 0.80
-  test_ratio: 0.20
+  train_ratio: 0.70
+  test_ratio: 0.30
   binary: ${binary}
   target_field: polygons # needed for the fair splitting (ignored for the random splitting)
   tile_size: ${original_tile_size}
@@ -87,7 +87,7 @@ test_split_inspector_kwargs:
 # object datasets generation settings
 # parms for the extraction of the objects from train set
 force_object_dataset_generator: False # if True the object dataset generator will be forced to run, cancelling the previous dataset
-object_target_classes: ["0", "1", "2", "3"] # specify the classes to extract, for each class a new dataset will be generated
+object_target_classes: ["0", "2", "3"] # specify the classes to extract, for each class a new dataset will be generated
 object_dataset_generator_kwargs:
   output_dir: ${object_datasets_dir}
   target_field: polygons
