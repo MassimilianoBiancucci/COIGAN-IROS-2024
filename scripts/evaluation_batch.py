@@ -61,7 +61,7 @@ def generate_inference_dataset(
                 return
 
 
-@hydra.main(config_path="../configs/evaluation/", config_name="test_eval.yaml", version_base="1.1")
+@hydra.main(config_path="../configs/evaluation/", config_name="test_eval_batch.yaml", version_base="1.1")
 def main(config: OmegaConf):
 
     #resolve the config inplace
@@ -97,7 +97,7 @@ def main(config: OmegaConf):
 
     # extracting all the filenames from the checkpoints_path
     # removing all the files that are not checkpoints (<int>.pt) and ordering them by the number
-    checkpoints = sorted([f for f in os.listdir(config.checkpoints_path) if f.endswith(".pt")], key=lambda x: int(x.split(".")[0]))
+    checkpoints = sorted([f for f in os.listdir(config.checkpoint_path) if f.endswith(".pt")], key=lambda x: int(x.split(".")[0]))
     LOGGER.info(f"Found the following checkpoints: {checkpoints}")
     for i, checkpoint in enumerate(checkpoints):
 
@@ -108,7 +108,7 @@ def main(config: OmegaConf):
         
         generate_inference_dataset(
             config,
-            checkpoint_path=os.path.join(config.checkpoints_path, checkpoint),
+            checkpoint_path=os.path.join(config.checkpoint_path, checkpoint),
             out_path=out_path
         )
 
@@ -121,7 +121,7 @@ def main(config: OmegaConf):
             n_imgs=config.n_samples
         )
 
-        LOGGER.info(f"step {checkpoint.split(".")[0]} FID:  {fid}")
+        LOGGER.info(f"step {checkpoint.split('.')[0]} FID:  {fid}")
 
         #update evaluation results
         results["FID"][checkpoint.split(".")[0]] = fid

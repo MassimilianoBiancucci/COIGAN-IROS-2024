@@ -4,7 +4,7 @@ run_name: ${conf_name}_${now:%d-%m-%Y_%H-%M-%S}
 
 # training variables
 #checkpoint: null # path to the checkpoint file to load
-checkpoint: /coigan/COIGAN-IROS-2024/experiments/COIGAN_severstal_test_14-02-2024_16-24-21/checkpoints/300000.pt
+checkpoint: /coigan/COIGAN-IROS-2024/experiments/COIGAN_severstal_run_18_21/370000.pt
 #checkpoint: /home/ubuntu/hdd/COIGAN-controllable-object-inpainting/ref_checkpoints/40000.pt
 start_iter: 0
 max_iter: 800000
