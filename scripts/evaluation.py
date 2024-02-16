@@ -30,7 +30,7 @@ def generate_inference_dataset(config):
     # create the folder for the generated images
     out_path = config.generated_imgs_path
     os.makedirs(out_path, exist_ok=True)
-
+    
     n_samples = config.n_samples
     dataloader = sample_data(make_dataloader(config))
     model = COIGANinference(config)
