@@ -42,7 +42,7 @@ import numpy as np
 import torch
 # from scipy.misc import imread
 
-from imageio import imread
+#from imageio import imread
 from PIL import Image, JpegImagePlugin
 from scipy import linalg
 from torch.nn.functional import adaptive_avg_pool2d
