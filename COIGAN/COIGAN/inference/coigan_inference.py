@@ -15,7 +15,8 @@ class COIGANinference:
 
     def __init__(
         self,
-        config: DictConfig
+        config: DictConfig,
+        checkpoint: str = None
     ):
         """
         Init method of the COIGAN inference class,
@@ -23,6 +24,7 @@ class COIGANinference:
 
         Args:
             config (DictConfig): config of the model
+            checkpoint (str): override the checkpoint path in the config
         """
         # save the config
         self.config = config
@@ -38,7 +40,8 @@ class COIGANinference:
 
         # load the generator
         self.generator = make_generator(**config.generator).to(self.device)
-        self.load_checkpoint(self.config.checkpoint_path)
+        checkoint = checkpoint if checkpoint is not None else self.config.checkpoint_path
+        self.load_checkpoint(checkoint)
 
         # load the mask noise generator
         self.mask_noise_generator = make_noise_generator(**self.config.data.mask_noise_generator_kwargs) \
