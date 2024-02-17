@@ -76,15 +76,16 @@ def main(config: OmegaConf):
     # Calcultaing the reference FID between the train and test datasets
     LOGGER.info("Calculating the reference FID...")
 
-    ref_fid = calculate_fid_given_paths(
+    # calculate the reference fid between the train and test datasets
+    ref_fid, train_stats = calculate_fid_given_paths(
         [config.train_imgs_path, config.test_imgs_path],
         config.inc_batch_size,
         config.device,
         config.inception_dims,
-        n_imgs=config.n_samples
+        n_imgs=config.n_samples,
+        ret_stats=True
     )
     LOGGER.info(f"Ref FID: {ref_fid}")
-
 
     results = {
         "ref FID": ref_fid,
@@ -114,11 +115,12 @@ def main(config: OmegaConf):
 
         # evaluate the generated dataset with the FID metric
         fid = calculate_fid_given_paths(
-            [out_path, config.test_imgs_path],
+            [config.train_imgs_path, out_path],
             config.inc_batch_size,
             config.device,
             config.inception_dims,
-            n_imgs=config.n_samples
+            n_imgs=config.n_samples,
+            stats=train_stats
         )
 
         LOGGER.info(f"step {checkpoint.split('.')[0]} FID:  {fid}")

@@ -261,7 +261,8 @@ def calculate_fid_given_paths(
         device='cuda', 
         dims=2048, 
         n_imgs=-1, 
-        seed=42
+        ret_stats = False,
+        stats = None
     ):
     """
     Calculates the FID of two paths
@@ -283,15 +284,24 @@ def calculate_fid_given_paths(
 
     model = InceptionV3([block_idx]).to(device)
 
-    LOGGER.info('Calculating the Inception mean and std of %s images.' % len(paths))
-    m1, s1 = _compute_statistics_of_path(paths[0], model, batch_size, device, dims, n_smpl=n_imgs)
-    
+    # if stats_1 is not provided, calculate the stats of the first path
+    if stats is None:
+        LOGGER.info('Calculating the Inception mean and std of %s images.' % len(paths))
+        m1, s1 = _compute_statistics_of_path(paths[0], model, batch_size, device, dims, n_smpl=n_imgs)
+    else:
+        m1, s1 = stats
+
+    # calculate the stats of the second path
     LOGGER.info('Calculating the Inception mean and std of %s images.' % len(paths))
     m2, s2 = _compute_statistics_of_path(paths[1], model, batch_size, device, dims, n_smpl=n_imgs)
 
+    # calculate the FID
     LOGGER.info('Calculating FID..')
     fid_value = calculate_frechet_distance(m1, s1, m2, s2)
 
+    # return FID and stats of the first path
+    if ret_stats:
+        return fid_value, (m1, s1)
     return fid_value
 
 
