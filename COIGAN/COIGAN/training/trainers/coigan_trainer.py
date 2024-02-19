@@ -227,6 +227,10 @@ class COIGANtrainer:
         self.d_limit_step = self.config.disc_steps
         self.d_step = 0
 
+        # variable used to slow down the reference discriminator learning
+        self.ref_d_steps_delay = self.config.ref_disc_steps_delay
+        self.absolute_d_step = 0
+        
         self.g_limit_step = self.config.gen_steps
         self.g_step = 0
 
@@ -287,7 +291,14 @@ class COIGANtrainer:
                     "fake_score": disc_out_fake.mean(),
                 })
 
-                if self.use_ref_disc:
+                # compute the discriminator losses
+                self.loss_mng.discriminator_loss(disc_out_fake, disc_out_true)
+
+                # apply regularization to the discriminator
+                self.loss_mng.discriminator_regularization(disc_in_true)
+
+                # Train the reference discriminator
+                if self.use_ref_disc and self.absolute_d_step%self.ref_d_steps_delay == 0:
                     #----> compute the reference discriminator outputs for the real and fake images
                     ref_disc_out_true, _ = self.ref_discriminator(ref_image)
                     ref_disc_out_fake, _ = self.ref_discriminator(fake_image)
@@ -297,21 +308,16 @@ class COIGANtrainer:
                         "ref_fake_score": ref_disc_out_fake.mean(),
                     })
                 
-                # compute the discriminator losses
-                self.loss_mng.discriminator_loss(disc_out_fake, disc_out_true)
-
-                # apply regularization to the discriminator
-                self.loss_mng.discriminator_regularization(disc_in_true)
-
-                if self.use_ref_disc:
                     # compute the reference discriminator losses
                     self.loss_mng.ref_discriminator_loss(ref_disc_out_fake, ref_disc_out_true)
 
                     # apply regularization to the reference discriminator
                     self.loss_mng.ref_discriminator_regularization(ref_image)
 
+
                 # determine the next turn owner
                 self.d_step += 1
+                self.absolute_d_step += 1
                 if self.d_step >= self.d_limit_step:
                     self.d_step = 0
                     self.turn = False

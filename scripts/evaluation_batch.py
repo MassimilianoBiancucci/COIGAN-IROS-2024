@@ -35,7 +35,7 @@ def generate_inference_dataset(
         checkpoint_path (str): override the checkpoint path in the config
         out_path (str): override the output path in the config
     """
-
+    
     # create the folder for the generated images
     out_path = config.generated_imgs_path if out_path is None else out_path
     os.makedirs(out_path, exist_ok=True)
@@ -77,13 +77,12 @@ def main(config: OmegaConf):
     LOGGER.info("Calculating the reference FID...")
 
     # calculate the reference fid between the train and test datasets
-    ref_fid, train_stats = calculate_fid_given_paths(
+    ref_fid = calculate_fid_given_paths(
         [config.train_imgs_path, config.test_imgs_path],
         config.inc_batch_size,
         config.device,
         config.inception_dims,
-        n_imgs=config.n_samples,
-        ret_stats=True
+        n_imgs= 37084, # number of images in the base dataset
     )
     LOGGER.info(f"Ref FID: {ref_fid}")
 
@@ -99,6 +98,8 @@ def main(config: OmegaConf):
     # extracting all the filenames from the checkpoints_path
     # removing all the files that are not checkpoints (<int>.pt) and ordering them by the number
     checkpoints = sorted([f for f in os.listdir(config.checkpoint_path) if f.endswith(".pt")], key=lambda x: int(x.split(".")[0]))
+    train_stats = None
+
     LOGGER.info(f"Found the following checkpoints: {checkpoints}")
     for i, checkpoint in enumerate(checkpoints):
 
@@ -114,12 +115,13 @@ def main(config: OmegaConf):
         )
 
         # evaluate the generated dataset with the FID metric
-        fid = calculate_fid_given_paths(
+        fid, train_stats = calculate_fid_given_paths(
             [config.train_imgs_path, out_path],
             config.inc_batch_size,
             config.device,
             config.inception_dims,
             n_imgs=config.n_samples,
+            ret_stats=True,
             stats=train_stats
         )
 

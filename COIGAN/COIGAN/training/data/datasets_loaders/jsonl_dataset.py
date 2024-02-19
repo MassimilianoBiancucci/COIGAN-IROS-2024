@@ -321,7 +321,7 @@ class JsonLineDatasetMasksOnly(JsonLineDatasetBase):
         for polygons in metadata[polygon_field]:
             
             # if the class is in the list of classes to load or if the list is None
-            if polygons["label"] in self.classes or self.classes is None:
+            if self.classes is None or polygons["label"] in self.classes:
 
                 mask = masks.get(polygons["label"], np.zeros(shape, dtype=np.uint8))
 
@@ -346,7 +346,7 @@ class JsonLineDatasetMasksOnly(JsonLineDatasetBase):
         return masks
 
 
-    def _get_masks(self, idx: int, ret_meta: bool = False) -> Tuple[np.ndarray, dict]:
+    def _get_masks(self, idx: int, ret_meta: bool = False, mask_value: int = 1) -> Tuple[np.ndarray, dict]:
         """
         Method that return the masks of the sample at the given index
         and eventually the metadata of the sample, if ret_meta is True.
@@ -363,7 +363,7 @@ class JsonLineDatasetMasksOnly(JsonLineDatasetBase):
 
         # load masks from the sample
         masks = {
-            field: self.load_masks(field, metadata, self.size, self.points_normalized)
+            field: self.load_masks(field, metadata, self.size, self.points_normalized, mask_value=mask_value)
             for field in self.masks_fields
         }
         
@@ -592,12 +592,43 @@ class JsonLineDataset(JsonLineDatasetMasksOnly):
 
 if __name__ == "__main__":
 
+    test_dataset_path = "/home/max/Desktop/Articolo_coigan/COIGAN-IROS-2024/datasets/severstal_steel_defect_dataset/test_IROS2024/tile_train_set"
+
     ######################################
     # Test JsonLineDatasetBase class
-    
+    #dataset = JsonLineDatasetMasksOnly(
+    #    os.path.join(test_dataset_path, "dataset.jsonl"),
+    #    os.path.join(test_dataset_path, "index"),
+    #    binary=True
+    #)
+    #dataset.on_worker_init()
+
     ######################################
     # Test JsonLineDatasetMasksOnly class
+    dataset = JsonLineDatasetMasksOnly(
+        os.path.join(test_dataset_path, "dataset.jsonl"),
+        os.path.join(test_dataset_path, "index"),
+        masks_fields=["polygons"],
+        classes=["0", "1", "2"],
+        binary=True
+    )
+    dataset.on_worker_init()
+
+    # visualization
+
+    for i in range(1000):
+        masks = dataset[i]
+        for field in masks:
+            for label in masks[field]:
+                mask = (masks[field][label]*255).astype(np.uint8)
+                cv2.imshow(f"{field} - {label}", mask)
+
+        # wait key or handle quit
+        if cv2.waitKey(0) & 0xFF == ord('q'):
+            cv2.destroyAllWindows()
+            break
+        
 
     ######################################
     # Test JsonLineDataset class
-    pass
+    

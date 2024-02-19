@@ -33,6 +33,10 @@ def make_optimizer(model, kind='adamw', **kwargs):
         optimizer_class = torch.optim.Adam
     elif kind == 'adamw':
         optimizer_class = torch.optim.AdamW
+    elif kind == 'sgd':
+        optimizer_class = torch.optim.SGD
+    elif kind == 'rmsprop':
+        optimizer_class = torch.optim.RMSprop
     else:
         raise ValueError(f'Unknown optimizer kind {kind}')
     return optimizer_class(model.parameters(), **kwargs)

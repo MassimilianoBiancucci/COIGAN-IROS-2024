@@ -138,6 +138,7 @@ experiments_*/
 datasets/*
 test_notebooks/
 models/*
+Segmentation_references
 
 # sensitive files
 build_args.txt

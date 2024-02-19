@@ -52,8 +52,10 @@ class Bin2JsonLineDatasetConverter:
 if __name__ == "__main__":
 
     #
-    orig_dataset_path = "/home/max/thesis/COIGAN-controllable-object-inpainting/datasets/severstal_steel_defect_dataset/test_1/object_datasets/object_dataset_0"
-    output_path = "/home/max/thesis/COIGAN-controllable-object-inpainting/datasets/severstal_steel_defect_dataset/test_1/object_datasets/decoded_object_dataset_0"
+    #orig_dataset_path = "/home/max/thesis/COIGAN-controllable-object-inpainting/datasets/severstal_steel_defect_dataset/test_1/object_datasets/object_dataset_0"
+    #output_path = "/home/max/thesis/COIGAN-controllable-object-inpainting/datasets/severstal_steel_defect_dataset/test_1/object_datasets/decoded_object_dataset_0"
+    orig_dataset_path = "/home/max/Desktop/Articolo_coigan/COIGAN-IROS-2024/datasets/severstal_steel_defect_dataset/test_IROS2024/tile_train_set"
+    output_path = "/home/max/Desktop/Articolo_coigan/COIGAN-IROS-2024/datasets/severstal_steel_defect_dataset/test_IROS2024/tile_train_set_nobin"
 
     # Load the dataset
     dataset = JsonLineDatasetBase(

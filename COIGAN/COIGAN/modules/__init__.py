@@ -5,6 +5,9 @@ from COIGAN.modules.pix2pixhd import GlobalGenerator, MultiDilatedGlobalGenerato
 from COIGAN.modules.stylegan2.swagan import Generator as SwaganGenerator
 from COIGAN.modules.stylegan2.swagan import Discriminator as SwaganDiscriminator
 
+# segmentation models
+from COIGAN.modules.unet import UNet
+
 def make_generator(kind, **kwargs):
     logging.info(f'Make generator {kind}')
 
@@ -33,3 +36,11 @@ def make_discriminator(kind, **kwargs):
         return SwaganDiscriminator(**kwargs)
 
     raise ValueError(f'Unknown discriminator kind {kind}')
+
+def make_segmentation_model(kind, **kwargs):
+    logging.info(f'Make segmentation model {kind}')
+
+    if kind == 'Unet':
+        return UNet(**kwargs)
+
+    raise ValueError(f'Unknown segmentation model kind {kind}')

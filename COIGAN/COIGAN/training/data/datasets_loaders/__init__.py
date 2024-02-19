@@ -14,6 +14,7 @@ from COIGAN.training.data.datasets_loaders.jsonl_object_dataset import JsonLineO
 from COIGAN.training.data.datasets_loaders.coigan_severstal_steel_defects_dataset import CoiganSeverstalSteelDefectsDataset
 
 from COIGAN.training.data.datasets_loaders.jsonl_dataset import JsonLineDatasetBase, JsonLineDataset
+from COIGAN.training.data.datasets_loaders.jsonl_segm_dataset import JsonLineDatasetSegm
 from COIGAN.training.data.datasets_loaders.severstal_steel_defect import SeverstalSteelDefectDataset
 
 from COIGAN.utils.ddp_utils import data_sampler
@@ -35,6 +36,10 @@ def make_dataloader(config: OmegaConf, rank=None):
     # create the dataset
     if config.data.kind == "severstal-steel-defect":
         dataset = make_severstal_steel_defect(config.data, seed=seed)
+    
+    if config.data.kind == "segmentation_jsonl":
+        dataset = make_segmentation_jsonl(config.data, seed=seed)
+
     else:
         raise "Dataset kind not supported"
 
@@ -129,7 +134,35 @@ def make_severstal_steel_defect(config: DictConfig, seed: int = None):
     )
 
     return dataset
-        
+
+
+def make_segmentation_jsonl(config: DictConfig, seed: int = None):
+    """
+    Method to preparare the dataset object 
+    for the severstal steel defect dataset.
+
+    Args:
+        config (OmegaConf): the data config object
+    """
+
+    # create the augmentor object
+    augmentor = Augmentor(
+        transforms=augmentation_presets_dict[config.augmentation_sets.mask_aug],
+        only_imgs_transforms=augmentation_presets_dict[config.augmentation_sets.img_aug]
+    )
+
+    # create the dataset
+    dataset = JsonLineDatasetSegm(
+        image_folder_path=config.dataset_path,
+        metadata_file_path=config.dataset_jsonl,
+        index_file_path=config.index_path,
+        classes=config.classes,
+        augmentor=augmentor,
+        masks_fields=config.masks_fields,
+        binary=config.binary
+    )
+
+    return dataset
 
 #####################
 # Debugging section #

@@ -44,7 +44,7 @@ mask_defects_preset = dChoice(
 imgs_defects_preset = sChoice(
     [
         #ColorJitter(brightness=0.5, contrast=0.5, saturation=0.5, hue=0.5),
-        RandomErasing(p=0.3, scale=(0.02, 0.13), ratio=(0.3, 3.3), value="random"),
+        #RandomErasing(p=0.3, scale=(0.02, 0.13), ratio=(0.3, 3.3), value="random"),
         #GaussianBlur(kernel_size=5),
         RandomPosterize(p=0.3, bits=4),
         RandomAutocontrast(p=0.3),

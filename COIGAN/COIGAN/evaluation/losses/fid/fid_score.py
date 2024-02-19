@@ -286,13 +286,13 @@ def calculate_fid_given_paths(
 
     # if stats_1 is not provided, calculate the stats of the first path
     if stats is None:
-        LOGGER.info('Calculating the Inception mean and std of %s images.' % len(paths))
+        #LOGGER.info('Calculating the Inception mean and std of images with path: %s' % paths[0])
         m1, s1 = _compute_statistics_of_path(paths[0], model, batch_size, device, dims, n_smpl=n_imgs)
     else:
         m1, s1 = stats
 
     # calculate the stats of the second path
-    LOGGER.info('Calculating the Inception mean and std of %s images.' % len(paths))
+    #LOGGER.info('Calculating the Inception mean and std of images with path: %s' % paths[1])
     m2, s2 = _compute_statistics_of_path(paths[1], model, batch_size, device, dims, n_smpl=n_imgs)
 
     # calculate the FID
