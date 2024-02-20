@@ -12,8 +12,8 @@ class dice_loss:
 
     def __init__(self, config=None):
         
-        if config is None:
-            self.config = self.std_conf
+        # set the configuration
+        self.config = self.std_conf if config is None else config
         
         self.epsilon = self.config["epsilon"]
         self.applay_sigmoid = self.config["applay_sigmoid"]
@@ -50,8 +50,8 @@ class log_cos_dice:
 
     def __init__(self, config=None):
         
-        if config is None:
-            self.config = self.std_conf
+        # set the configuration
+        self.config = self.std_conf if config is None else config
         
         self.epsilon = self.config["epsilon"]
         self.applay_sigmoid = self.config["applay_sigmoid"]

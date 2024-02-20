@@ -5,9 +5,9 @@ run_name: ${conf_name}_${now:%d-%m-%Y_%H-%M-%S}
 checkpoint: null # path to the checkpoint file to load
 
 epochs: 20
-batch_size: 4
-num_workers: 4
-prefetch: 4
+batch_size: 12
+num_workers: 12
+prefetch: 12
 
 val_interval: 300 # validation interval in steps (batches)
 

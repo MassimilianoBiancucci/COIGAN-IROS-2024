@@ -12,7 +12,7 @@ from tqdm import tqdm
 from COIGAN.modules import make_segmentation_model
 from COIGAN.utils.common_utils import make_optimizer, make_lr_scheduler
 from COIGAN.training.logger import DataLogger
-from COIGAN.segmentation.losses import loss_mng
+from COIGAN.segmentation.losses.loss_mng import loss_mng
 from COIGAN.segmentation.losses import dice_loss, log_cos_dice
 
 LOGGER = logging.getLogger(__name__)
@@ -26,6 +26,12 @@ losses = {
         #"border_loss": border_loss()
         #"bce_logit": bce_logit_loss()
     }
+val_losses = {
+        "log_cos_dice": log_cos_dice({
+            "epsilon": 1e-6,
+            "applay_sigmoid": False
+        }),
+    }
 loss_mng_train_conf = {
     "losses": losses,
     "classes": output_classes,
@@ -35,7 +41,7 @@ loss_mng_train_conf = {
     "input_classes_weights": None #[1.0, 1.0], # None means equal weights
 }
 loss_mng_val_conf = {
-    "losses": losses, #{"dice": dice_loss()},
+    "losses": val_losses, #{"dice": dice_loss()},
     "classes": output_classes,
     "input_classes": input_classes,
     "loss_weights": None, #[1.0], # None means equal weights, applyed if the class_loss_weight is not defined for a class
@@ -57,6 +63,7 @@ class SegmentationTrainer:
 
         # config
         self.config = config
+        self.classes = self.config.data.classes # classes to segment
 
         # dataloaders
         self.dataloader = dataloader # training dataloader
@@ -90,16 +97,6 @@ class SegmentationTrainer:
         self.model = make_segmentation_model(**config.model).to(self.device)
         self.optim = make_optimizer(self.model, **config.optimizers.model)
         self.scheduler = make_lr_scheduler(self.optim, **config.optimizers.lr_scheduler)
-        
-        # learning rate scheduler ! (Not integrated in specific function for time reasons)
-        #self.scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
-        #    self.optim,
-        #    "max",
-        #    patience=10, # number of lr_scheduler updates (with a static treand) to wait before decaying the learning rate
-        #    factor=0.95, # factor to decay the learning rate each period of static loss
-        #    min_lr=1e-6
-        #)  # goal: maximize Dice score
-
 
         self.grad_scaler = torch.cuda.amp.GradScaler(enabled=self.amp)
 
@@ -240,14 +237,21 @@ class SegmentationTrainer:
 
                     # logging images
                     if self.global_step % self.log_img_interval == 0:
-                        self.datalogger.log_visual_results(
-                            self.global_step, 
-                            {
-                                "input": self.make_grid(imgs),
-                                "output": self.make_grid(output),
-                                "target": self.make_grid(torch.sigmoid(masks))
-                            }
-                        )
+                        
+                        # define the visual logs to be saved
+                        visual_logs = {"input": self.make_grid(imgs)}
+
+                        # preprocess the output to be visualized
+                        # in this section the outut tensor [b, cls, h, w] is converted into
+                        # cls tensors with shape [b, h, w] and then the make_grid function is used for each one
+                        for i, cls in enumerate(self.classes):
+                            
+                            visual_logs[f"out_{cls}"] = self.make_grid(torch.sigmoid(output[:, i, :, :].unsqueeze(1)))
+                            visual_logs[f"gt_mask_{cls}"] = self.make_grid(masks[:, i, :, :].unsqueeze(1))
+                        
+                        # log the results
+                        self.datalogger.log_visual_results(self.global_step, visual_logs)
+                            
                     
                     # logging weights
                     # NOTE: the weights logging is internally scheduled by the datalogger
@@ -269,6 +273,8 @@ class SegmentationTrainer:
         return make_grid(
             sample,
             nrow= int(np.sqrt(sample.shape[0])),
-            normalize=True,
-            range=(0, 1)
+            normalize=False,
+            range=(0, 1),
+            padding=5,
+            pad_value=1
         )
