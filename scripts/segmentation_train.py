@@ -15,7 +15,7 @@ from COIGAN.segmentation.segmentation_trainer import SegmentationTrainer
 
 LOGGER = logging.getLogger(__name__)
 
-@hydra.main(config_path="../configs/segmentation_training/", config_name="test_train.yaml", version_base="1.1")
+@hydra.main(config_path="../configs/segmentation_training/", config_name="test_severstal_train.yaml", version_base="1.1")
 def main(config: OmegaConf):
     
     #resolve the config inplace
@@ -33,8 +33,13 @@ def train(config):
 
     # generate the dataset and wrap it in a dataloader
     dataloader = make_dataloader(config)
+    val_dataloader = make_dataloader(config, validation=True)
 
-    trainer = SegmentationTrainer(config, dataloader)
+    trainer = SegmentationTrainer(
+        config, 
+        dataloader,
+        val_dataloader
+    )
     trainer.train()
 
 

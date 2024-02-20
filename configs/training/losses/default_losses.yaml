@@ -35,11 +35,11 @@ generator_losses:
   # same as resnet_pl but with a smooth mask applied to change weight 
   # near and over the objects
   resnet_pl_smooth_masked:
-    weight: 0.15
+    weight: 0.03
     kwargs:
       channels: ${data.object_datasets.n} # number of channels of the mask, equal to the number of classes
       weights_path: ${location.loss_models}
-      obj_weight: 0.025 # weight of the loss in the object area
+      obj_weight: 0.015 # weight of the loss in the object area
       bg_weight: 0.0 # weight of the loss in the background area
       kernel_size: 21 # size of the linear kernel used to smooth the mask
 
@@ -54,7 +54,7 @@ generator_reg:
 ### Discriminator losses parameters
 discriminator_losses:
   logistic:
-    weight: 2
+    weight: 3
 
 # discriminator regularitions
 discriminator_reg: # TODO sistema i parametri

@@ -40,7 +40,7 @@ def make_discriminator(kind, **kwargs):
 def make_segmentation_model(kind, **kwargs):
     logging.info(f'Make segmentation model {kind}')
 
-    if kind == 'Unet':
+    if kind == 'unet':
         return UNet(**kwargs)
 
     raise ValueError(f'Unknown segmentation model kind {kind}')

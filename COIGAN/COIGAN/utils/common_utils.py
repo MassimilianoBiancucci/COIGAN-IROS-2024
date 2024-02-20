@@ -42,6 +42,22 @@ def make_optimizer(model, kind='adamw', **kwargs):
     return optimizer_class(model.parameters(), **kwargs)
 
 
+def make_lr_scheduler(optimizer, kind='step', **kwargs):
+    if kind == 'step':
+        scheduler_class = torch.optim.lr_scheduler.StepLR
+    elif kind == 'multi_step':
+        scheduler_class = torch.optim.lr_scheduler.MultiStepLR
+    elif kind == 'exponential':
+        scheduler_class = torch.optim.lr_scheduler.ExponentialLR
+    elif kind == 'cosine':
+        scheduler_class = torch.optim.lr_scheduler.CosineAnnealingLR
+    elif kind == 'reduce_on_plateau':
+        scheduler_class = torch.optim.lr_scheduler.ReduceLROnPlateau
+    else:
+        raise ValueError(f'Unknown lr scheduler kind {kind}')
+    return scheduler_class(optimizer, **kwargs)
+
+
 def sample_data(loader):
         while True:
             for batch in loader:

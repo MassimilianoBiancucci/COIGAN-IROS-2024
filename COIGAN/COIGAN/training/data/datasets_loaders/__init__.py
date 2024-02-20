@@ -22,13 +22,14 @@ from COIGAN.utils.ddp_utils import data_sampler
 LOGGER = logging.getLogger(__name__)
 
 
-def make_dataloader(config: OmegaConf, rank=None):
+def make_dataloader(config: OmegaConf, rank=None, validation=False):
     """
     Method to create the dataset by params in config
 
     Args:
         config (OmegaConf): the config object with the data params used to build the dataset
         rank (int): the rank of the process (if passed is used to set the seed of the dataset)
+        val (bool): if True the dataloader is created for validation
     """
     rank = rank if rank is not None else 0 # if no rank is passed, set it to 0
     seed = config.data.seed * (rank + 1) # multiply the main seed by the rank to get a different seed for each process
@@ -37,8 +38,8 @@ def make_dataloader(config: OmegaConf, rank=None):
     if config.data.kind == "severstal-steel-defect":
         dataset = make_severstal_steel_defect(config.data, seed=seed)
     
-    if config.data.kind == "segmentation_jsonl":
-        dataset = make_segmentation_jsonl(config.data, seed=seed)
+    elif config.data.kind == "segmentation_jsonl":
+        dataset = make_segmentation_jsonl(config.data, validation=validation, seed=seed)
 
     else:
         raise "Dataset kind not supported"
@@ -136,7 +137,7 @@ def make_severstal_steel_defect(config: DictConfig, seed: int = None):
     return dataset
 
 
-def make_segmentation_jsonl(config: DictConfig, seed: int = None):
+def make_segmentation_jsonl(config: DictConfig, seed: int = None, validation: bool = False):
     """
     Method to preparare the dataset object 
     for the severstal steel defect dataset.
@@ -149,13 +150,22 @@ def make_segmentation_jsonl(config: DictConfig, seed: int = None):
     augmentor = Augmentor(
         transforms=augmentation_presets_dict[config.augmentation_sets.mask_aug],
         only_imgs_transforms=augmentation_presets_dict[config.augmentation_sets.img_aug]
-    )
+    ) if not validation else None
+
+    if not validation:
+        image_folder_path = config.image_folder_path
+        metadata_file_path = config.metadata_file_path
+        index_file_path = config.index_file_path
+    else:
+        image_folder_path = config.val_image_folder_path
+        metadata_file_path = config.val_metadata_file_path
+        index_file_path = config.val_index_file_path
 
     # create the dataset
     dataset = JsonLineDatasetSegm(
-        image_folder_path=config.dataset_path,
-        metadata_file_path=config.dataset_jsonl,
-        index_file_path=config.index_path,
+        image_folder_path=image_folder_path,
+        metadata_file_path=metadata_file_path,
+        index_file_path=index_file_path,
         classes=config.classes,
         augmentor=augmentor,
         masks_fields=config.masks_fields,

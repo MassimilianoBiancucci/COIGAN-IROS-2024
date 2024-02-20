@@ -374,10 +374,7 @@ class COIGANtrainer:
                     ref_disc_out_fake,
                     gen_in_orig_masks
                 )
-
-                if self.device == 0 :
-                    self.datalogger.log_weights_and_gradients(self.generator)
-
+                    
                 # apply regularization to the generator, and saving the results in the gen_loss dict if present
                 self.loss_mng.generator_regularization(gen_in)
 
@@ -442,6 +439,10 @@ class COIGANtrainer:
 
 
                     self.datalogger.log_visual_results(i, visual_results)
+
+
+                # logging the weights and gradients
+                self.datalogger.log_weights_and_gradients(i, self.generator)
 
                 # save the checkpoint
                 if i > 0 and i % self.config.checkpoint_interval == 0:

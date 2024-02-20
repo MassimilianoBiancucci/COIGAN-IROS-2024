@@ -113,7 +113,7 @@ class DataLogger:
             pass
     
     
-    def log_weights_and_gradients(self, model: Union[torch.nn.Module, torch.nn.DataParallel]):
+    def log_weights_and_gradients(self, step_idx: int, model: Union[torch.nn.Module, torch.nn.DataParallel]):
         """
             Method that log the weights of the model.
 
@@ -139,7 +139,7 @@ class DataLogger:
                     value.grad.data.cpu()
                 )
 
-            wandb.log(histograms)
+            wandb.log(histograms, step=step_idx)
 
         # increment the counter
         self.log_weights_counter += 1

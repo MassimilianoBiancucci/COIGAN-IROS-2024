@@ -1,0 +1,1 @@
+from COIGAN.segmentation.losses import loss_mng

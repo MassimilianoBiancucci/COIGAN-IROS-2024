@@ -1,0 +1,5 @@
+kind: unet
+n_channels: 3
+n_classes: 3
+bilinear: true
+sigm_out: false

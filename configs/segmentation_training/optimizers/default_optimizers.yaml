@@ -1,0 +1,12 @@
+model:
+  kind: sgd
+  lr: 2.5e-2 # learning rate
+  weight_decay: 1.0e-8 # weight decay, L2 regularization coefficient
+  momentum: 0.9 # momentum factor, used to accelerate the learning process
+
+lr_scheduler:
+  kind: reduce_on_plateau
+  mode: max # mode of the scheduler, max: the scheduler will be triggered when the quantity monitored is no longer increasing
+  patience: 5 # number of epochs with no improvement after which learning rate will be reduced
+  factor: 0.95 # factor by which the learning rate will be reduced. new_lr = lr * factor
+  min_lr: 1.0e-6 # a lower bound on the learning rate of all param groups or each group respectively

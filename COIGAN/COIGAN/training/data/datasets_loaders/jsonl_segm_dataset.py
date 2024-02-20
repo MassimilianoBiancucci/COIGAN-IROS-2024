@@ -80,7 +80,9 @@ class JsonLineDatasetSegm(JsonLineDatasetMasksOnly):
 
         Returns:
             np.ndarray: the reformatted masks with shape [n_classes, h, w]
+            bool: flag that indicate if the masks are empty
         """
+        fill = 0
 
         # create the final tensor with the classes as channels
         final_masks = np.zeros((len(self.classes), self.size[0], self.size[1]), dtype=np.uint8)
@@ -89,12 +91,13 @@ class JsonLineDatasetSegm(JsonLineDatasetMasksOnly):
         for _class in self.classes:
             for field in self.masks_fields:
                 if _class in masks[field]:
+                    fill = 1
                     final_masks[self.classes.index(_class), :, :] = masks[field][_class]
         
-        return final_masks
+        return final_masks, fill
 
 
-    def _get_image_and_masks(self, idx: int, ret_meta: bool = False) -> Tuple[np.ndarray, dict]:
+    def _get_image_and_masks(self, idx: int, ret_meta: bool = False) -> dict:
         """
         Method that return the image, the masks of the sample at the given index
         and eventually the metadata of the sample, if ret_meta is True.
@@ -107,9 +110,11 @@ class JsonLineDatasetSegm(JsonLineDatasetMasksOnly):
             Tuple[np.ndarray, Dict[str, Dict[str, np.ndarray]]]: the image and the masks of the sample, 
                 as dict with as keys the passed list of fields and as values other dicts with as keys 
                 the classes and as values the masks as numpy arrays.
-
-            Tuple[np.ndarray, dict, dict]: the image, the masks of the sample in the same format as 
-                above and the raw metadata of the sample.
+                containing: 
+                    - "inp": the image as torch tensor with shape [c, h, w]
+                    - "out": the masks as torch tensor with shape [n_classes, h, w]
+                    - "fill": flag that indicate if the masks are filled or not
+                    - "meta": the metadata of the sample (if ret_meta is True)
         """
 
         masks, metadata = self._get_masks(idx, ret_meta=True, mask_value=self.mask_value)
@@ -126,7 +131,7 @@ class JsonLineDatasetSegm(JsonLineDatasetMasksOnly):
 
         # reformat the masks to a single tensor with the classes as channels
         # with a final shape given by [h, w, n_classes]
-        masks = self._reformat_masks(masks) # /255.0 not needed, if self.mask_value is 1
+        masks, fill = self._reformat_masks(masks) # /255.0 not needed, if self.mask_value is 1
         masks = torch.as_tensor(masks, dtype=torch.float32)
         
         # apply the augmentations
@@ -134,12 +139,12 @@ class JsonLineDatasetSegm(JsonLineDatasetMasksOnly):
             img, masks = self.augmentor(img, masks)
 
         # apply normalization to img
-        img = img.float() / 255.0
+        img = img.float()/255.0
 
         if ret_meta:
-            return {"inp": img, "out": masks, "meta": metadata}
+            return {"inp": img, "out": masks, "fill": fill, "meta": metadata}
         else:
-            return {"inp": img, "out": masks}
+            return {"inp": img, "out": masks, "fill": fill}
 
 
     def __getitem__(self, idx: int) -> Dict[str, Dict[str, np.ndarray]]:
