@@ -45,7 +45,7 @@ class log_cos_dice:
 
     std_conf = {
         "epsilon": 1e-6,
-        "applay_sigmoid": True
+        "applay_sigmoid": False
     }
 
     def __init__(self, config=None):
@@ -256,6 +256,197 @@ class pos_points_loss:
 
         assert output.size() == target.size()
         
+
+########################################################################################
+## Classic eval metrics ################################################################
+########################################################################################
+# NOTE: The following metrics can't be used as loss functions during the training      #
+#       but they can be used to evaluate the model performance. Due to the fact that   #
+#       they do not use torch tensors so are not differentiable.                       #
+########################################################################################
+
+class accuracy:
+    """
+    Accuracy metric
+    """
+
+    def __init__(self, threshold=0.5):
+        self.threshold = threshold
+
+    def __call__(self, input, target):
+        """
+        Args:
+            input: the input of the model
+                es. (channels, height, width)
+                channels -> positive points, negative points, image
+
+            output: the output of the model
+                es. (height, width)
+
+            target: the target of the model
+                es. (height, width)
+        """
+        assert input.size() == target.size()
+
+        input = input.detach().cpu().numpy()
+        target = target.detach().cpu().numpy()
+
+        input = (input > self.threshold).astype(np.uint8)
+        target = (target > self.threshold).astype(np.uint8)
+
+        return np.sum(input == target)/input.size
+
+
+class precision:
+    """
+    Precision metric
+    """
+    def __init__(self, threshold=0.5, eps=1e-6):
+        self.threshold = threshold
+        self.eps = eps
+
+    def __call__(self, input, target):
+        """
+        Args:
+            input: the input of the model
+                es. (channels, height, width)
+                channels -> positive points, negative points, image
+
+            output: the output of the model
+                es. (height, width)
+
+            target: the target of the model
+                es. (height, width)
+        """
+        assert input.size() == target.size()
+
+        input = input.detach().cpu().numpy()
+        target = target.detach().cpu().numpy()
+
+        input = (input > self.threshold).astype(np.uint8)
+        target = (target > self.threshold).astype(np.uint8)
+
+        tp = np.sum(input * target)
+        fp = np.sum(input * (1 - target))
+
+        return tp/(tp + fp + self.eps)
+
+    def __repr__(self):
+        return "precision"
+
+
+class recall:
+    """
+    Recall metric
+    """
+    def __init__(self, threshold=0.5, eps=1e-6):
+        self.threshold = threshold
+        self.eps = eps
+
+    def __call__(self, input, target):
+        """
+        Args:
+            input: the input of the model
+                es. (channels, height, width)
+                channels -> positive points, negative points, image
+
+            output: the output of the model
+                es. (height, width)
+
+            target: the target of the model
+                es. (height, width)
+        """
+        assert input.size() == target.size()
+
+        input = input.detach().cpu().numpy()
+        target = target.detach().cpu().numpy()
+
+        input = (input > self.threshold).astype(np.uint8)
+        target = (target > self.threshold).astype(np.uint8)
+
+        tp = np.sum(input * target)
+        fn = np.sum((1 - input) * target)
+
+        return tp/(tp + fn + self.eps)
+
+    def __repr__(self):
+        return "recall"
+
+
+class IoU:
+    """
+    Intersection over Union metric
+    """
+    def __init__(self, threshold=0.5, eps=1e-6):
+        self.threshold = threshold
+        self.eps = eps
+    
+    def __call__(self, input, target):
+        """
+        Args:
+            input: the input of the model
+                es. (channels, height, width)
+                channels -> positive points, negative points, image
+
+            output: the output of the model
+                es. (height, width)
+
+            target: the target of the model
+                es. (height, width)
+        """
+        assert input.size() == target.size()
+
+        input = input.detach().cpu().numpy()
+        target = target.detach().cpu().numpy()
+
+        input = (input > self.threshold).astype(np.uint8)
+        target = (target > self.threshold).astype(np.uint8)
+
+        intersection = np.sum(input * target)
+        union = np.sum((input + target) > 0)
+
+        return intersection/(union + self.eps)
+
+
+class F1:
+    """
+    F1 metric
+    """
+    def __init__(self, threshold=0.5, eps=1e-6):
+        self.threshold = threshold
+        self.eps = eps
+    
+    def __call__(self, input, target):
+        """
+        NOTE: this is the harmonic mean of precision and recall
+        NB: 2 * (precision * recall) / (precision + recall)
+        NB: 2 * tp / (2 * tp + fp + fn)
+        (Same as the dice loss)
+        Args:
+            input: the input of the model
+                es. (channels, height, width)
+                channels -> positive points, negative points, image
+
+            output: the output of the model
+                es. (height, width)
+
+            target: the target of the model
+                es. (height, width)
+        """
+        assert input.size() == target.size()
+
+        input = input.detach().cpu().numpy()
+        target = target.detach().cpu().numpy()
+
+        input = (input > self.threshold).astype(np.uint8)
+        target = (target > self.threshold).astype(np.uint8)
+
+        tp = np.sum(input * target)
+        fp = np.sum(input * (1 - target))
+        fn = np.sum((1 - input) * target)
+
+        return tp/(tp + (fp + fn)/2 + self.eps)
+
 
 if __name__ == "__main__":
     

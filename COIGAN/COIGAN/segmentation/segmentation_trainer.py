@@ -13,25 +13,37 @@ from COIGAN.modules import make_segmentation_model
 from COIGAN.utils.common_utils import make_optimizer, make_lr_scheduler
 from COIGAN.training.logger import DataLogger
 from COIGAN.segmentation.losses.loss_mng import loss_mng
-from COIGAN.segmentation.losses import dice_loss, log_cos_dice
+from COIGAN.segmentation.losses import (
+    log_cos_dice,
+    F1,
+    accuracy,
+    precision,
+    recall,
+    IoU
+)
 
 LOGGER = logging.getLogger(__name__)
 
+thrs = 0.5
 output_classes = ['0', '1', '2']
 input_classes = ['no_damage', 'damage']
+
 losses = {
-        "log_cos_dice": log_cos_dice(),
-        #"dice": dice_loss(),
-        #"bce_with_logits": bce_logit_loss(on_active=True, min_threshold=0.05),
-        #"border_loss": border_loss()
-        #"bce_logit": bce_logit_loss()
-    }
+    "log_cos_dice": log_cos_dice(),
+}
+
 val_losses = {
-        "log_cos_dice": log_cos_dice({
-            "epsilon": 1e-6,
-            "applay_sigmoid": False
-        }),
-    }
+    "log_cos_dice": log_cos_dice(),
+}
+
+classic_val_losses = {
+    "F1": F1(thrs),
+    "accuracy": accuracy(thrs),
+    "precision": precision(thrs),
+    "recall": recall(thrs),
+    "IoU": IoU(thrs)
+}
+
 loss_mng_train_conf = {
     "losses": losses,
     "classes": output_classes,
@@ -42,6 +54,14 @@ loss_mng_train_conf = {
 }
 loss_mng_val_conf = {
     "losses": val_losses, #{"dice": dice_loss()},
+    "classes": output_classes,
+    "input_classes": input_classes,
+    "loss_weights": None, #[1.0], # None means equal weights, applyed if the class_loss_weight is not defined for a class
+    "classes_weights": None, #[1.0, 1.0, 1.0, 1.0, 1.0], # None means equal weights
+    "input_classes_weights": None, #[1.0, 1.0], # None means equal weights
+}
+classic_loss_mng_val_conf = {
+    "losses": classic_val_losses,
     "classes": output_classes,
     "input_classes": input_classes,
     "loss_weights": None, #[1.0], # None means equal weights, applyed if the class_loss_weight is not defined for a class
@@ -59,6 +79,7 @@ class SegmentationTrainer:
         ):
         
         # training variables
+        self.epoch = 0
         self.global_step = 0
 
         # config
@@ -92,6 +113,10 @@ class SegmentationTrainer:
         # paths
         self.checkpoint = self.config.checkpoint # path to the checkpoint to load
         self.checkpoints_path = self.config.location.checkpoint_dir # path to save the checkpoints
+        os.makedirs(self.config.location.checkpoint_dir, exist_ok=True)
+
+        # debug variables
+        self.short_val = self.config.short_val # if True, use a short validation set (useful for debugging)
 
         # model, optimizer and learning rate scheduler
         self.model = make_segmentation_model(**config.model).to(self.device)
@@ -103,6 +128,7 @@ class SegmentationTrainer:
         # creation of the loss managers
         self.loss_manager = loss_mng(loss_mng_train_conf)
         self.val_loss_manager = loss_mng(loss_mng_val_conf, eval=True)
+        self.classic_val_loss_manager = loss_mng(classic_loss_mng_val_conf, eval=True)
 
         # inizialization of the datalogger
         self.datalogger = DataLogger(
@@ -124,14 +150,14 @@ class SegmentationTrainer:
         self.optim.load_state_dict(checkpoint["optim"])
         self.scheduler.load_state_dict(checkpoint["scheduler"])
 
-        # extract the epoch from the checkpoint path
-        epoch = int(os.path.basename(checkpoint_file_path).split(".")[0])
-        self.global_step = epoch * self.n_train_batches
+        # extract the epoch and the step from the checkpoint path
+        self.epoch = int(os.path.basename(checkpoint_file_path).split("_")[0])
+        self.global_step = int(os.path.basename(checkpoint_file_path).split("_")[1].split(".")[0])
 
 
-    def save_checkpoint(self, epoch):
+    def save_checkpoint(self, epoch, step):
 
-        checkpoint_path = os.path.join(self.checkpoints_path, f"{epoch}.pt")
+        checkpoint_path = os.path.join(self.checkpoints_path, f"{epoch}_{step}.pt")
         LOGGER.info(f"Saving checkpoint: {checkpoint_path}")
 
         torch.save({
@@ -145,6 +171,7 @@ class SegmentationTrainer:
 
         # reset the validation loss manager, to handle the new validation round
         self.val_loss_manager.reset_val()
+        self.classic_val_loss_manager.reset_val()
 
         # set the model to evaluation mode
         self.model.eval()
@@ -158,14 +185,21 @@ class SegmentationTrainer:
 
                 with torch.no_grad():
                     mask_pred = self.model(imgs)
-                    mask_pred = torch.sigmoid(mask_pred)
+                    mask_pred = (mask_pred > thrs).float()
                     self.val_loss_manager(
-                        (mask_pred > 0.5).float(), 
+                        mask_pred, 
                         masks, 
+                        in_class
+                    )
+                    self.classic_val_loss_manager(
+                        mask_pred,
+                        masks,
                         in_class
                     )
 
                 pbar.update(self.batch_size) # update the progress bar, by the batch size
+                #if self.short_val and pbar.n >= 100:
+                #    break
         
         # calculating the val loss across all the validation set
         val_loss = self.val_loss_manager.get_val_loss()
@@ -178,10 +212,12 @@ class SegmentationTrainer:
         self.datalogger.log_step_results(
             self.global_step, 
             {
+                "learning rate": self.optim.param_groups[0]["lr"],
                 "val_loss": val_loss,
                 "val_input_classwise_losses": self.val_loss_manager.get_val_losses_input_classwise(),
                 "val_classwise_losses": self.val_loss_manager.get_val_losses_classwise(),
-                "val_losswise_losses": self.val_loss_manager.get_val_losses_losswise()
+                "val_losswise_losses": self.val_loss_manager.get_val_losses_losswise(),
+                "classic_val_losswise_losses": self.classic_val_loss_manager.get_val_losses_losswise()
             }
         )
 
@@ -194,7 +230,7 @@ class SegmentationTrainer:
         self.model.train()
 
         # training main loop
-        for epoch in range(self.epochs):
+        for epoch in range(self.epoch, self.epochs):
             with tqdm(total=self.n_train, desc=f"Epoch {epoch}/{self.epochs}", unit="imgs") as pbar:
                 for batch in self.dataloader:
                     imgs = batch["inp"].to(self.device) # input images

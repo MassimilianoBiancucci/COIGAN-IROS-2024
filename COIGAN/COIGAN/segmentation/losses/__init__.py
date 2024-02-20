@@ -4,5 +4,10 @@ from COIGAN.segmentation.losses.losses import (
     bce_loss,
     bce_logit_loss,
     border_loss,
-    pos_points_loss
+    pos_points_loss,
+    F1,
+    accuracy,
+    precision,
+    recall,
+    IoU
 )
