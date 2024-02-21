@@ -15,7 +15,14 @@ from COIGAN.segmentation.segmentation_trainer import SegmentationTrainer
 
 LOGGER = logging.getLogger(__name__)
 
-@hydra.main(config_path="../configs/segmentation_training/", config_name="test_severstal_train.yaml", version_base="1.1")
+# config selector
+idx = 1
+presets = [
+    "test_severstal_train.yaml",
+    "debug_severstal_train.yaml",
+]
+
+@hydra.main(config_path="../configs/segmentation_training/", config_name=presets[idx], version_base="1.1")
 def main(config: OmegaConf):
     
     #resolve the config inplace

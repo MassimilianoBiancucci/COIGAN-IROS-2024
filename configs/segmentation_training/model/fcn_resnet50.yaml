@@ -1,0 +1,2 @@
+kind: fcn_resnet50
+num_classes: 4

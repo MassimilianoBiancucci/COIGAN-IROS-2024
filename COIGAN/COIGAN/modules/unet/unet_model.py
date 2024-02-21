@@ -49,7 +49,8 @@ class UNet(nn.Module):
         x = self.up3(x, x2)
         x = self.up4(x, x1)
             
-        return self.outc(x)
+        #return self.outc(x)
+        return {"out": self.outc(x)}
     
     
     def _init_weights(self, module):

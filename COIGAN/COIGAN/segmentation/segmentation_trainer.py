@@ -25,7 +25,7 @@ from COIGAN.segmentation.losses import (
 LOGGER = logging.getLogger(__name__)
 
 thrs = 0.5
-output_classes = ['0', '1', '2']
+output_classes = ['0', '1', '2', 'bg']
 input_classes = ['no_damage', 'damage']
 
 losses = {
@@ -115,9 +115,6 @@ class SegmentationTrainer:
         self.checkpoints_path = self.config.location.checkpoint_dir # path to save the checkpoints
         os.makedirs(self.config.location.checkpoint_dir, exist_ok=True)
 
-        # debug variables
-        self.short_val = self.config.short_val # if True, use a short validation set (useful for debugging)
-
         # model, optimizer and learning rate scheduler
         self.model = make_segmentation_model(**config.model).to(self.device)
         self.optim = make_optimizer(self.model, **config.optimizers.model)
@@ -184,7 +181,8 @@ class SegmentationTrainer:
                 in_class = batch["fill"] # fill value for the masks (used to classify the input classes [No damage, Damage])
 
                 with torch.no_grad():
-                    mask_pred = self.model(imgs)
+                    mask_pred = self.model(imgs)["out"]
+                    mask_pred = torch.softmax(mask_pred, dim=1)
                     mask_pred = (mask_pred > thrs).float()
                     self.val_loss_manager(
                         mask_pred, 
@@ -198,7 +196,7 @@ class SegmentationTrainer:
                     )
 
                 pbar.update(self.batch_size) # update the progress bar, by the batch size
-                #if self.short_val and pbar.n >= 100:
+                #if pbar.n >= 100:
                 #    break
         
         # calculating the val loss across all the validation set
@@ -238,7 +236,8 @@ class SegmentationTrainer:
                     in_class = batch["fill"] # fill value for the masks (used to classify the input classes [No damage, Damage])
 
                     with torch.cuda.amp.autocast(enabled=self.amp):
-                        output = self.model(imgs)
+                        output = self.model(imgs)["out"]
+                        output = torch.softmax(output, dim=1)
                         loss = self.loss_manager(output, masks, in_class)
                     
                     self.optim.zero_grad()
@@ -282,7 +281,7 @@ class SegmentationTrainer:
                         # cls tensors with shape [b, h, w] and then the make_grid function is used for each one
                         for i, cls in enumerate(self.classes):
                             
-                            visual_logs[f"out_{cls}"] = self.make_grid(torch.sigmoid(output[:, i, :, :].unsqueeze(1)))
+                            visual_logs[f"out_{cls}"] = self.make_grid(output[:, i, :, :].unsqueeze(1))
                             visual_logs[f"gt_mask_{cls}"] = self.make_grid(masks[:, i, :, :].unsqueeze(1))
                         
                         # log the results

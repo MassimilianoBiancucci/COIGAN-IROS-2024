@@ -1,5 +1,5 @@
 kind: unet
 n_channels: 3 
-n_classes: 3
+n_classes: 4
 bilinear: true
-sigm_out: true
+sigm_out: false

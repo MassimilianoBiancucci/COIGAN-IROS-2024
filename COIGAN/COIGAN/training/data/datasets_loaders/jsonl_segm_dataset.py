@@ -24,6 +24,7 @@ class JsonLineDatasetSegm(JsonLineDatasetMasksOnly):
         metadata_file_path: str,
         index_file_path: str,
         classes: List[str],
+        background_class: bool = True,
         augmentor: Augmentor = None,
         masks_fields: List[str] = ["polygons"],
         mask_value: int = 1,
@@ -40,6 +41,7 @@ class JsonLineDatasetSegm(JsonLineDatasetMasksOnly):
             index_path (str): index file containing the start position of each sample in the metadata file
             masks_fields (list[str]): list of the fields containing the masks, used to group the masks in the output dict, and to read the polygons.
             classes (Union[list[str],None], optional): list of the classes to load. Defaults to None. if None, all the classes will be loaded.
+            background_class (bool, optional): if the background class is present, add one channel to the masks with the background class. Defaults to True.
             size (Union[Tuple[int, int], int], optional): size of the output masks. Defaults to (256, 256).
             points_normalized (bool, optional): if the points are normalized. Defaults to False. if the are in the range [0, 1], the points_normalized parameter must be set to True.
             binary (bool, optional): if the metadata file is binary. Defaults to False.
@@ -62,6 +64,7 @@ class JsonLineDatasetSegm(JsonLineDatasetMasksOnly):
         self.image_folder_path = image_folder_path
         self.augmentor = augmentor
         self.mask_value = mask_value
+        self.background_class = background_class
 
         # check if the image folder exists
         if not os.path.isdir(self.image_folder_path):
@@ -85,7 +88,9 @@ class JsonLineDatasetSegm(JsonLineDatasetMasksOnly):
         fill = 0
 
         # create the final tensor with the classes as channels
-        final_masks = np.zeros((len(self.classes), self.size[0], self.size[1]), dtype=np.uint8)
+        n_classes = len(self.classes) if not self.background_class else len(self.classes) + 1
+        final_masks = np.zeros((n_classes, self.size[0], self.size[1]), dtype=np.uint8)
+        if self.background_class: bg_mask = np.ones((self.size[0], self.size[1]), dtype=np.uint8)
 
         # for each field
         for _class in self.classes:
@@ -93,6 +98,10 @@ class JsonLineDatasetSegm(JsonLineDatasetMasksOnly):
                 if _class in masks[field]:
                     fill = 1
                     final_masks[self.classes.index(_class), :, :] = masks[field][_class]
+                    if self.background_class: bg_mask -= masks[field][_class]
+        
+        if self.background_class:
+            final_masks[-1, :, :] = bg_mask
         
         return final_masks, fill
 

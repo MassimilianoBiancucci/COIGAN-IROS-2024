@@ -1,13 +1,13 @@
-conf_name: Segmentation_severstal_test
+conf_name: Debug_segmentation_severstal_test
 run_name: ${conf_name}_${now:%d-%m-%Y_%H-%M-%S}
 
 # training variables
 checkpoint: null # path to the checkpoint file to load
 
 epochs: 20
-batch_size: 12
-num_workers: 12
-prefetch: 24
+batch_size: 2
+num_workers: 2
+prefetch: 2
 
 val_interval: 100 # validation interval in steps (batches)
 
@@ -19,14 +19,14 @@ distributed: False # Do not touch distributed not implemented in Segmentation ye
 ################################################
 
 enable_wandb: False # True # enable wandb logging, if False no logging will be performed on the cloud
-log_img_interval: 500 # steps interval between each output visualization
-log_weights_interval: 2000 # steps interval between each weights visualization
-checkpoint_interval: 2000 # steps interval between each checkpoint
+log_img_interval: 100 # steps interval between each output visualization
+log_weights_interval: 100 # steps interval between each weights visualization
+checkpoint_interval: 100 # steps interval between each checkpoint
 
 
 defaults:
-  - location: default_locations
-  - data: severstal_dataset
+  - location: debug_locations
+  - data: debug_severstal_dataset
   - model: fcn_resnet50
   - optimizers: default_optimizers
   - losses: default_losses

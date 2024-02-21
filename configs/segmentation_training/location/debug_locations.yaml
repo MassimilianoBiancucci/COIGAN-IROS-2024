@@ -1,7 +1,7 @@
 #####################################################################################
 ### ATTENTION : This var must be setted with the actual path to the project home! ###
-project_home: /coigan/COIGAN-IROS-2024
-#project_home: /home/max/Desktop/Articolo_coigan/COIGAN-IROS-2024
+#project_home: /coigan/COIGAN-IROS-2024
+project_home: /home/max/Desktop/Articolo_coigan/COIGAN-IROS-2024
 #project_home: /home/ubuntu/hdd/COIGAN-controllable-object-inpainting
 #####################################################################################
 
