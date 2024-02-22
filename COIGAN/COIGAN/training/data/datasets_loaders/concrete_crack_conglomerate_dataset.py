@@ -98,7 +98,10 @@ class ConcreteCrackConglomerateDataset(object):
 
         # Get the mask path
         mask_path = os.path.join(self.train_masks_path, img_name)
-        masks = cv2.imread(mask_path,0)
+
+        masks = cv2.imread(mask_path, 0)
+        masks = np.expand_dims(masks, axis=-1)
+        
      
 
         return image, masks 

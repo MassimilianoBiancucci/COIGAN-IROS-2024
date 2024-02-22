@@ -19,7 +19,7 @@ generator_losses:
       channels: ${data.object_datasets.n} # number of channels of the mask, equal to the number of classes
       obj_weight: 0 # weight of the loss in the object area
       bg_weight: 1.0 # weight of the loss in the background area
-      kernel_size: 11 # size of the linear kernel used to smooth the mask
+      kernel_size: 3 # size of the linear kernel used to smooth the mask
 
   adversarial:
     weight: 5
@@ -41,7 +41,7 @@ generator_losses:
       weights_path: ${location.loss_models}
       obj_weight: 0.015 # weight of the loss in the object area
       bg_weight: 0.0 # weight of the loss in the background area
-      kernel_size: 21 # size of the linear kernel used to smooth the mask
+      kernel_size: 11 # size of the linear kernel used to smooth the mask
 
 # genrator regularitions
 generator_reg:

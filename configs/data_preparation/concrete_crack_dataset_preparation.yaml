@@ -2,7 +2,7 @@
 #########################################
 # DATSET NAME
 # name of the generated dataset 
-dataset_name: test_IROS2024
+dataset_name: test_cccd_IROS2024
 
 # Change this to your own path of the COIGAN-controllable-object-inpainting repo
 repo_dir: /coigan/COIGAN-IROS-2024
@@ -14,12 +14,12 @@ dataset_dir: ${repo_dir}/datasets/Conglomerate Concrete Crack Detection
 
 # datasets locations
 zip_file: ${dataset_dir}/severstal-steel-defect-detection.zip
-raw_dataset_dir: ${dataset_dir}/Train/defect_cccd
-jsonl_dataset_dir: ${dataset_dir}/jsonl_all_sample
+raw_dataset_dir: ${dataset_dir}/Train/defect_cccd # <--
+jsonl_dataset_dir: ${dataset_dir}/Train/defect_cccd_jsonl # <--
 
-train_set_dir: ${dataset_dir}/${dataset_name}/train_set
+train_set_dir: ${dataset_dir}/Train/defect_cccd_jsonl # <--
 test_set_dir: ${dataset_dir}/${dataset_name}/test_set
-object_datasets_dir: ${dataset_dir}/${dataset_name}/object_datasets
+object_datasets_dir: ${dataset_dir}/Train/object_datasets # <--
 base_dataset_dir: ${dataset_dir}/${dataset_name}/base_dataset
 
 tile_train_set_dir: ${dataset_dir}/${dataset_name}/tile_train_set
@@ -87,7 +87,7 @@ test_split_inspector_kwargs:
 # object datasets generation settings
 # parms for the extraction of the objects from train set
 force_object_dataset_generator: False # if True the object dataset generator will be forced to run, cancelling the previous dataset
-object_target_classes: ["0", "2", "3"] # specify the classes to extract, for each class a new dataset will be generated
+object_target_classes: ["0"] # specify the classes to extract, for each class a new dataset will be generated
 object_dataset_generator_kwargs:
   output_dir: ${object_datasets_dir}
   target_field: polygons
