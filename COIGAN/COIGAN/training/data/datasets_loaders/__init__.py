@@ -16,6 +16,7 @@ from COIGAN.training.data.datasets_loaders.coigan_severstal_steel_defects_datase
 from COIGAN.training.data.datasets_loaders.jsonl_dataset import JsonLineDatasetBase, JsonLineDataset
 from COIGAN.training.data.datasets_loaders.jsonl_segm_dataset import JsonLineDatasetSegm
 from COIGAN.training.data.datasets_loaders.severstal_steel_defect import SeverstalSteelDefectDataset
+from COIGAN.training.data.datasets_loaders.concrete_crack_conglomerate_dataset import ConcreteCrackConglomerateDataset
 
 from COIGAN.utils.ddp_utils import data_sampler
 

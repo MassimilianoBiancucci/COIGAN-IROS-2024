@@ -19,7 +19,7 @@ from COIGAN.training.data.datasets_loaders.severstal_steel_defect import Severst
 class SeverstalSteelDefectPreprcessor(JsonLineDatasetBaseGenerator):
     """
     That module convert the Severstal Steel Defect Dataset into a COIGAN compatible dataset.
-
+    
     Operations:
         - convert the masks into polygons
         - split each sample in squared tiles
