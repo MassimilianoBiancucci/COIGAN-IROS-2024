@@ -29,7 +29,7 @@ output_classes = ['0', '1', '2', 'bg']
 input_classes = ['no_damage', 'damage']
 
 losses = {
-    "log_cos_dice": log_cos_dice(),
+    "log_cos_dice": log_cos_dice()
 }
 
 val_losses = {
@@ -279,7 +279,7 @@ class SegmentationTrainer:
                         # preprocess the output to be visualized
                         # in this section the outut tensor [b, cls, h, w] is converted into
                         # cls tensors with shape [b, h, w] and then the make_grid function is used for each one
-                        for i, cls in enumerate(self.classes):
+                        for i, cls in enumerate(output_classes):
                             
                             visual_logs[f"out_{cls}"] = self.make_grid(output[:, i, :, :].unsqueeze(1))
                             visual_logs[f"gt_mask_{cls}"] = self.make_grid(masks[:, i, :, :].unsqueeze(1))

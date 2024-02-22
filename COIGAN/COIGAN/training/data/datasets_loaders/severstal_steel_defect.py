@@ -233,7 +233,7 @@ class SeverstalSteelDefectDataset(object):
     def rle2mask(rle, h, w):
         """
             Convert a run length encoding to a mask
-
+            
             Args:
                 rle (str): Run length encoding
                 h (int): Height of the mask

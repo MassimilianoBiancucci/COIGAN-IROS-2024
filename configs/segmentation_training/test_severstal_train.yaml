@@ -9,7 +9,7 @@ batch_size: 12
 num_workers: 12
 prefetch: 24
 
-val_interval: 100 # validation interval in steps (batches)
+val_interval: 2500 # validation interval in steps (batches)
 
 device: cuda:0 # device to use for training
 amp: True # enable automatic mixed precision
@@ -18,8 +18,8 @@ amp: True # enable automatic mixed precision
 distributed: False # Do not touch distributed not implemented in Segmentation yet, variable still necessary for the dataloader
 ################################################
 
-enable_wandb: False # True # enable wandb logging, if False no logging will be performed on the cloud
-log_img_interval: 500 # steps interval between each output visualization
+enable_wandb: True # True # enable wandb logging, if False no logging will be performed on the cloud
+log_img_interval: 1000 # steps interval between each output visualization
 log_weights_interval: 2000 # steps interval between each weights visualization
 checkpoint_interval: 2000 # steps interval between each checkpoint
 

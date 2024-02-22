@@ -510,6 +510,7 @@ def main(config: DictConfig):
     # 7 - convert in tile datasets the train and the test dataset, with the same size of the tiles used in the COIGAN model
     create_tile_datasets(config)
 
+    
 
 
 if __name__ == "__main__":
