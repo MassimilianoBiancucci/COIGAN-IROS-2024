@@ -59,7 +59,7 @@ def main(config: OmegaConf):
     OmegaConf.resolve(config)
 
     LOGGER.info(f'Config: {OmegaConf.to_yaml(config)}')
-
+    
     # save ghe config in the output folder
     OmegaConf.save(config, os.path.join(os.getcwd(), 'config.yaml')) # saving the configs to config.hydra.run.dir
 

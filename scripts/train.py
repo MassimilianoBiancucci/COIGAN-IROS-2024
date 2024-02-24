@@ -44,7 +44,7 @@ def train(rank: int, world_size: int, config):
 
     if config.distributed:
         ddp_setup(rank, world_size)
-
+    
     # generate the dataset and wrap it in a dataloader
     dataloader = make_dataloader(config, rank=rank)
 

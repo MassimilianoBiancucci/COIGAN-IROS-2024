@@ -88,7 +88,7 @@ def make_severstal_steel_defect(config: DictConfig, seed: int = None):
     augmentor = Augmentor(
         transforms=augmentation_presets_dict[config.augmentation_sets.mask_aug],
         only_imgs_transforms=augmentation_presets_dict[config.augmentation_sets.img_aug]
-    )
+    ) if config.augmentation_sets is not None else None
 
     # generate the paths for the object datasets
     object_datasets_paths = [

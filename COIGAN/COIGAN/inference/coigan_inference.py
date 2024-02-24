@@ -28,7 +28,7 @@ class COIGANinference:
         """
         # save the config
         self.config = config
-
+        
         # set device
         self.device = config.device \
               if config.device is not None else \
