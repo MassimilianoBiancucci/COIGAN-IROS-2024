@@ -459,7 +459,7 @@ def create_tile_datasets(config: DictConfig):
     ).convert()
 
 
-@hydra.main(config_path='../configs/data_preparation', config_name='concrete_crack_dataset_preparation.yaml', version_base="1.1")
+@hydra.main(config_path='../configs/data_preparation', config_name='debug_concrete_crack_dataset_preparation.yaml', version_base="1.1")
 def main(config: DictConfig):
     """
         Script that load the Severstal steel defect dataset and prepare it for the trianing pipeline.
