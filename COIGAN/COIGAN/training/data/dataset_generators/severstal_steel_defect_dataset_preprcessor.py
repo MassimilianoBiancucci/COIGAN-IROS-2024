@@ -249,7 +249,7 @@ class SeverstalSteelDefectPreprcessor(JsonLineDatasetBaseGenerator):
         images = []
         masks = []
 
-        nh_tiles = np.ceil(tile_size[0])
+        nh_tiles = np.ceil(h/tile_size[0])
         h_offset = np.floor((h-tile_size[0])/(nh_tiles-1)).astype(np.int32) \
             if h - tile_size[0] > 0 else tile_size[0]
 

@@ -93,11 +93,13 @@ def scale_all_images(
 
 
 if __name__ == "__main__":
+    """
+    remove_empty_jsonl(
+        dataset_folder = "/home/max/Desktop/Articolo_coigan/COIGAN-IROS-2024/datasets/severstal_steel_defect_dataset/test_IROS2024/tile_train_set",
+        out_dataset_folder = "/home/max/Desktop/Articolo_coigan/COIGAN-IROS-2024/datasets/severstal_steel_defect_dataset/test_IROS2024/tile_train_set_filtered"
+    )
 
-    #remove_empty_jsonl(
-    #    dataset_folder = "/home/max/Desktop/Articolo_coigan/COIGAN-IROS-2024/datasets/severstal_steel_defect_dataset/test_IROS2024/tile_train_set",
-    #    out_dataset_folder = "/home/max/Desktop/Articolo_coigan/COIGAN-IROS-2024/datasets/severstal_steel_defect_dataset/test_IROS2024/tile_train_set_filtered"
-    #)
+    """
 
     targets = [
         ("/home/max/Desktop/Articolo_coigan/COIGAN-IROS-2024/datasets/Conglomerate Concrete Crack Detection/Train/reduced_cccd/images/data", cv2.INTER_AREA, (256, 256)),

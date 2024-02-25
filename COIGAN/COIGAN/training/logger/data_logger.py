@@ -122,6 +122,7 @@ class DataLogger:
                 model (torch.nn.Module or torch.nn.DataParallel): the model
         """
         if self.wandb and \
+            self.log_weights_interval > 0 and \
             self.log_weights_counter % self.log_weights_interval == 0:
             
             if self.distributed:
