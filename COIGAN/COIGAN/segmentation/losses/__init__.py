@@ -1,4 +1,5 @@
 from COIGAN.segmentation.losses.losses import (
+    focal_loss,
     dice_loss,
     log_cos_dice,
     bce_loss,

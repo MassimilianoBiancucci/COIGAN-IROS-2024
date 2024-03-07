@@ -1,9 +1,13 @@
 import os
 import cv2
+import numpy as np
 from tqdm import tqdm
+
+from typing import List
 
 from COIGAN.training.data.datasets_loaders import JsonLineDatasetBase
 from COIGAN.training.data.dataset_generators import JsonLineDatasetBaseGenerator
+from COIGAN.training.data.dataset_inspectors import JsonLineDatasetInspector
 
 def remove_empty_jsonl(dataset_folder, out_dataset_folder):
     """
@@ -119,17 +123,51 @@ def enalrge_masks(
         cv2.imwrite(image_path, img)
 
 
+def create_dataset_report(
+    dataset_path: str,
+    fields_to_inspect: List[str] = ["polygons"],
+    binary: bool = True
+):
+    
+    # check if file params.json is present, otherwise create it
+    # the json is like "{"tile_size": [256, 1600]}" with the shapes of the images
+    # in the data folder, consider all the images to have the same shape
+    if not os.path.exists(os.path.join(dataset_path, "params.json")):
+        print("Creating the params.json file...")
+        images = [f for f in os.listdir(os.path.join(dataset_path, "data")) if f.endswith(".jpg")]
+        img = cv2.imread(os.path.join(dataset_path, "data", images[0]))
+        with open(os.path.join(dataset_path, "params.json"), "w") as f:
+            f.write(f"{{\"tile_size\": {list(img.shape[:2])}}}")
+        print("Done!")
+
+
+    print("Creating the report of the dataset...")
+
+    inspector = JsonLineDatasetInspector(
+        dataset_path=dataset_path,
+        fields_to_inspect=fields_to_inspect,
+        binary=binary
+    )
+
+    inspector.inspect()
+    inspector.dump_report()
+    inspector.dump_raw_report()
+    inspector.generate_graphs()
+
+    print("Done!")
+
+
 if __name__ == "__main__":
     """
     remove_empty_jsonl(
-        dataset_folder = "/home/max/Desktop/Articolo_coigan/COIGAN-IROS-2024/datasets/severstal_steel_defect_dataset/test_IROS2024/tile_train_set",
-        out_dataset_folder = "/home/max/Desktop/Articolo_coigan/COIGAN-IROS-2024/datasets/severstal_steel_defect_dataset/test_IROS2024/tile_train_set_filtered"
+        dataset_folder = "/coigan/COIGAN-IROS-2024/datasets/severstal_steel_defect_dataset/test_IROS2024/tile_train_set",
+        out_dataset_folder = "/coigan/COIGAN-IROS-2024/datasets/severstal_steel_defect_dataset/test_IROS2024/tile_train_set_filtered"
     )
     ""
     targets = [
-        ("/coigan/COIGAN-IROS-2024/datasets/Conglomerate Concrete Crack Detection/Train/reduced_base_cccd/data", cv2.INTER_AREA, (256, 256)),
-        ("/coigan/COIGAN-IROS-2024/datasets/Conglomerate Concrete Crack Detection/Train/reduced_defect_cccd/images", cv2.INTER_AREA, (256, 256)),
-        ("/coigan/COIGAN-IROS-2024/datasets/Conglomerate Concrete Crack Detection/Train/reduced_defect_cccd/masks", cv2.INTER_NEAREST, (256, 256)),
+        ("/coigan/COIGAN-IROS-2024/datasets/Conglomerate Concrete Crack Detection/Train/reduced_enlarged_orig_cccd/images/data", cv2.INTER_AREA, (256, 256)),
+        #("/coigan/COIGAN-IROS-2024/datasets/Conglomerate Concrete Crack Detection/Train/reduced_defect_cccd/images", cv2.INTER_AREA, (256, 256)),
+        #("/coigan/COIGAN-IROS-2024/datasets/Conglomerate Concrete Crack Detection/Test/reduced_enlarged_orig_cccd/masks", cv2.INTER_NEAREST, (256, 256)),
     ]
     for target in targets:
         scale_all_images(
@@ -138,10 +176,15 @@ if __name__ == "__main__":
             out_tile_size = target[2]
         )
     print("Done!")
-    """
+    ""
 
     enalrge_masks(
-        target_folder = "/coigan/COIGAN-IROS-2024/datasets/Conglomerate Concrete Crack Detection/Train/reduced_enlarged_defect_cccd/masks",
+        target_folder = "/coigan/COIGAN-IROS-2024/datasets/Conglomerate Concrete Crack Detection/Test/reduced_enlarged_orig_cccd/masks",
         kernel_size = 2,
-        iterations = 2
+        iterations = 5
     )
+    """
+
+    create_dataset_report("/coigan/COIGAN-IROS-2024/datasets/severstal_steel_defect_dataset/test_IROS2024/tile_train_set_filtered")
+
+    ""

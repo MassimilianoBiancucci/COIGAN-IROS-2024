@@ -164,7 +164,7 @@ class dCropUpscale(nn.Module):
 
 
 class dRotations(nn.Module):
-    def __init__(self, degrees, expand=False):
+    def __init__(self, degrees, expand=False, fill=0, bg_fill=None):
         """Rotate image and mask
 
         Args:
@@ -172,6 +172,11 @@ class dRotations(nn.Module):
                                 if single values the interval of rotation is [-degrees, degrees].
 
             expand (bool, optional): Expand the image for containing the entire rotated image. Defaults to False.
+
+            fill (int, optional): The value to fill the border of the image. Defaults to 0.
+
+            bg_fill (int, optional): The value to fill the border of the mask. Defaults to None.
+                                if None the value is the same as fill, otherwise the last channel of the mask is filled with bg_fill.
         """
 
         super(dRotations, self).__init__()
@@ -180,6 +185,8 @@ class dRotations(nn.Module):
             degrees = (-degrees, degrees)
         self.degrees = degrees
         self.expand = expand
+        self.fill = fill
+        self.bg_fill = bg_fill
         self.name = "dRotations"
 
     def forward(self, x, mask):
@@ -190,10 +197,29 @@ class dRotations(nn.Module):
         x = F.rotate(
             x, degrees, interpolation=InterpolationMode.BILINEAR, expand=self.expand
         ) if x is not None else None
-        mask = F.rotate(
-            mask, degrees, interpolation=InterpolationMode.NEAREST, expand=self.expand
-        ) if mask is not None else None
+
+        if self.bg_fill is None:
+            # mask rotation if bg class isn't present
+            mask = F.rotate(
+                mask, degrees, interpolation=InterpolationMode.NEAREST, expand=self.expand, fill=self.fill
+            ) if mask is not None else None
+        else:
+            # mask rotation if bg class is present
+            # in this case the mask is spitte in the last channel and the rest of the channels
+            # the last channel is rotated with the bg_fill value
+            # the rest of the channels are rotated with the fill value
+            mask_bg = mask[-1, :, :].unsqueeze(0)
+            mask_fg = mask[:-1, :, :]
+            mask_fg = F.rotate(
+                mask_fg, degrees, interpolation=InterpolationMode.NEAREST, expand=self.expand, fill=self.fill
+            )
+            mask_bg = F.rotate(
+                mask_bg, degrees, interpolation=InterpolationMode.NEAREST, expand=self.expand, fill=self.bg_fill
+            )
+            mask = torch.cat((mask_fg, mask_bg), 0)
+
         return x, mask
+
 
     def __repr__(self):
         return self.name + "(" + str(self.degrees) + ")"

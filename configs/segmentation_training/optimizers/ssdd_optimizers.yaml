@@ -1,0 +1,19 @@
+model_old:
+  kind: sgd
+  lr: 1.0e-2 # learning rate
+  weight_decay: 1.0e-7 # weight decay, L2 regularization coefficient
+  momentum: 0.98 # momentum factor, used to accelerate the learning process
+
+model:
+  kind: adamw # adam or adamw
+  lr: 0.0005
+  betas: [0.0, 0.9] # [0.0, 0.99] for adamw
+
+
+lr_scheduler:
+  kind: reduce_on_plateau
+  mode: min # mode of the scheduler, min for loss, max for accuracy
+  patience: 10 # number of epochs with no improvement after which learning rate will be reduced
+  cooldown: 3 # number of epochs to wait before resuming normal operation after lr has been reduced
+  factor: 0.5 # factor by which the learning rate will be reduced. new_lr = lr * factor
+  min_lr: 1.0e-8 # a lower bound on the learning rate of all param groups or each group respectively

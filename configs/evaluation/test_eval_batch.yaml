@@ -1,5 +1,5 @@
 
-conf_name: COIGAN_evaluation_test_1
+conf_name: COIGAN_evaluation_test_380k_to_620k
 run_name: ${conf_name}_${now:%d-%m-%Y_%H-%M-%S}
 
 # device to use for inference
@@ -7,7 +7,8 @@ device: cuda:0
 
 # path to the checkpoints folder to load
 # each checkpoint in the folder must be in the format {checkpoint_step}.pt or it will be ignored
-checkpoint_path: /coigan/COIGAN-IROS-2024/experiments/COIGAN_severstal_run_18_21
+checkpoint_path: /coigan/COIGAN-IROS-2024/experiments/COIGAN_severstal_run_checkpoints
+min_checkpoint: 380000 # minimum checkpoint to load
 
 # path for the train images used to create a FID reference distribution
 # (the FID generated between the train_set and the test_set is used to evaluate the FID obtained by the generated images and the test_set)
@@ -29,10 +30,10 @@ inception_dims: 2048 # dimension of the inception features
 #   768: 2,  # Pre-aux classifier features
 #   2048: 3  # Final average pooling features
 
-batch_size: 64 # batch size for the coigan generator
-inc_batch_size: 256 # batch size for the inception network
-num_workers: 32 # dataloader workers
-prefetch: 256
+batch_size: 32 # batch size for the coigan generator
+inc_batch_size: 128 # batch size for the inception network
+num_workers: 16 # dataloader workers
+prefetch: 128
 
 
 # other data preparation params

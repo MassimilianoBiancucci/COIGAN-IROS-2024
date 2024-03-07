@@ -1,4 +1,5 @@
 import torch
+from torchvision.ops.focal_loss import sigmoid_focal_loss
 from torch.functional import F
 import numpy as np
 import cv2
@@ -130,6 +131,42 @@ class bce_logit_loss:
     
     def __repr__(self):
         return "bce_logit_loss"
+
+
+class focal_loss:
+
+    def __init__(
+            self,
+            alpha: float = 0.25,
+            gamma: float = 2,
+            reduction: str = "mean"
+        ):
+        """
+        Args:
+            alpha (float): Weighting factor in range (0,1) to balance
+                positive vs negative examples or -1 for ignore. Default: ``0.25``.
+            gamma (float): Exponent of the modulating factor (1 - p_t) to
+                balance easy vs hard examples. Default: ``2``.
+            reduction (string): ``'none'`` | ``'mean'`` | ``'sum'``
+                ``'none'``: No reduction will be applied to the output.
+                ``'mean'``: The output will be averaged.
+                ``'sum'``: The output will be summed. Default: ``'none'``.
+        """
+        self.alpha = alpha
+        self.gamma = gamma
+        self.reduction = reduction
+
+    
+    def __call__(self, input, target):
+        """
+        Args:
+            input: A tensor with the shape (height, width) normalized between 0 and 1.
+            target: A tensor with the shape (height, width) normalized between 0 and 1.
+        """
+        return sigmoid_focal_loss(input, target, self.alpha, self.gamma, self.reduction) 
+    
+    def __repr__(self):
+        return "focal_loss"
 
 
 class border_loss:

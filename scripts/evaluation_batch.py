@@ -97,7 +97,9 @@ def main(config: OmegaConf):
 
     # extracting all the filenames from the checkpoints_path
     # removing all the files that are not checkpoints (<int>.pt) and ordering them by the number
+    min_checkpoint = config.min_checkpoint
     checkpoints = sorted([f for f in os.listdir(config.checkpoint_path) if f.endswith(".pt")], key=lambda x: int(x.split(".")[0]))
+    checkpoints = [c for c in checkpoints if int(c.split(".")[0]) >= min_checkpoint] # filter the checkpoints by the min_checkpoint
     train_stats = None
 
     LOGGER.info(f"Found the following checkpoints: {checkpoints}")

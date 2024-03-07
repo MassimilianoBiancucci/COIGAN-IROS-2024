@@ -18,6 +18,7 @@ LOGGER = logging.getLogger(__name__)
 # config selector
 idx = 1
 presets = [
+    "test_cccd_train.yaml",
     "test_severstal_train.yaml",
     "debug_severstal_train.yaml",
 ]

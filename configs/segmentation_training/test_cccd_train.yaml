@@ -1,4 +1,4 @@
-conf_name: Segmentation_severstal_test
+conf_name: Segmentation_cccd_test
 run_name: ${conf_name}_${now:%d-%m-%Y_%H-%M-%S}
 
 # training variables
@@ -9,28 +9,27 @@ batch_size: 12
 num_workers: 12
 prefetch: 24
 
-val_interval: 1000 # validation interval in steps (batches)
+val_interval: 350 # validation interval in steps (batches)
 
 device: cuda:0 # device to use for training
-amp: False # enable automatic mixed precision
-use_softmax: False # if True, the model output will be passed through a softmax layer
+amp: True # enable automatic mixed precision
 
 ################################################
 distributed: False # Do not touch distributed not implemented in Segmentation yet, variable still necessary for the dataloader
 ################################################
 
 enable_wandb: True # True # enable wandb logging, if False no logging will be performed on the cloud
-log_img_interval: 1000 # steps interval between each output visualization
-log_weights_interval: 2000 # steps interval between each weights visualization
-checkpoint_interval: 1000 # steps interval between each checkpoint
+log_img_interval: 100 # steps interval between each output visualization
+log_weights_interval: 350 # steps interval between each weights visualization
+checkpoint_interval: 350 # steps interval between each checkpoint
 
 
 defaults:
   - location: default_locations
-  - data: severstal_dataset
-  - model: fcn_resnet50_ssdd
-  - optimizers: ssdd_optimizers
+  - data: cccd_dataset
+  - model: fcn_resnet50
+  - optimizers: default_optimizers
   - losses: default_losses
-  - logger: ssdd_logger
+  - logger: cccd_logger
   - evaluator: default_evaluator
   - hydra: overrides
