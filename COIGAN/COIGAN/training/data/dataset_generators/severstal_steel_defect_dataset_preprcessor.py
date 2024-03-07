@@ -34,7 +34,7 @@ class SeverstalSteelDefectPreprcessor(JsonLineDatasetBaseGenerator):
         dump_every: int = 1000,
         binary: bool = True,
         n_workers: int = 1,
-        q_size: int = 10
+        q_size: int = 10,
     ):
         """
         Init the SeverstalSteelDefectPreprcessor
@@ -327,7 +327,7 @@ class SeverstalSteelDefectPreprcessor(JsonLineDatasetBaseGenerator):
         reduction_factor=4, 
         normalize=False, 
         min_poly_points=25,
-        min_allowed_poly_points=5,
+        min_allowed_poly_points=150,
         check_validity=True
     ):
         """

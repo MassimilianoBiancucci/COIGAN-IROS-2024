@@ -1,5 +1,6 @@
 import os
 import cv2
+import numpy as np
 from tqdm import tqdm
 
 from COIGAN.training.data.datasets_loaders import JsonLineDatasetBase
@@ -120,6 +121,7 @@ def enalrge_masks(
 
 
 if __name__ == "__main__":
+
     """
     remove_empty_jsonl(
         dataset_folder = "/home/max/Desktop/Articolo_coigan/COIGAN-IROS-2024/datasets/severstal_steel_defect_dataset/test_IROS2024/tile_train_set",
