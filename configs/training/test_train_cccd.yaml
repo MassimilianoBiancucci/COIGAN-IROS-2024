@@ -3,15 +3,15 @@ conf_name: COIGAN_cccd_test
 run_name: ${conf_name}_${now:%d-%m-%Y_%H-%M-%S}
 
 # training variables
-checkpoint: null # path to the checkpoint file to load
-#checkpoint: /coigan/COIGAN-IROS-2024/experiments/COIGAN_severstal_run_18_21/370000.pt
-#checkpoint: /home/ubuntu/hdd/COIGAN-controllable-object-inpainting/ref_checkpoints/40000.pt
+#checkpoint: null # path to the checkpoint file to load
+#checkpoint: /coigan/COIGAN-IROS-2024/experiments/COIGAN_cccd_test_24-02-2024_23-46-52/checkpoints/40000.pt
+checkpoint: /coigan/COIGAN-IROS-2024/experiments/COIGAN_cccd_test_02-03-2024_10-46-17/checkpoints/160000.pt
 start_iter: 0
 max_iter: 800000
 
-batch_size: 24 #8 # batch size for each training process
-num_workers: 18 #6 # dataloader workers
-prefetch: 20 #4
+batch_size: 28 #8 # batch size for each training process
+num_workers: 16 #6 # dataloader workers
+prefetch: 28 #4
 
 gen_steps: 1 # define how many steps to train the generator before give the turn to the discriminator
 disc_steps: 1 # define how many steps to train the discriminator before give the turn to the generator
@@ -20,7 +20,7 @@ ref_disc_steps_delay: 2 # define every how many defect discriminator's steps the
 
 
 
-use_g_ema: False # use exponential moving average for the generator
+use_g_ema: True # use exponential moving average for the generator
 use_ref_disc: True # use the reference discriminator for the generator training
 
 mask_base_img: False # If true zero out the base image where the concat masks are 1s, for the input_base_img and for the generator output
@@ -34,13 +34,13 @@ input_masks_noise_smooth: 5 # size of gaussian filter applied to the noise masks
 distributed: False # enable distributed training
 ################################################
 
-enable_wandb: False # enable wandb logging, if False no logging will be performed on the cloud
+enable_wandb: True # enable wandb logging, if False no logging will be performed on the cloud
 log_img_interval: 1000 # steps interval between each output visualization
-log_weights_interval: 1000 # steps interval between each weights visualization
+log_weights_interval: 0 # steps interval between each weights visualization
 checkpoint_interval: 10000 # steps interval between each checkpoint
 
 # logging other options
-log_shapes_and_defects: False # enable the logging of input shapes and defects during the images logging
+log_shapes_and_defects: True # enable the logging of input shapes and defects during the images logging
 
 defaults:
   - location: default_locations

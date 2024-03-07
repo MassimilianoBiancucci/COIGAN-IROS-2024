@@ -1,5 +1,6 @@
 import os
 import cv2
+import numpy as np
 from tqdm import tqdm
 
 from COIGAN.training.data.datasets_loaders import JsonLineDatasetBase
@@ -91,17 +92,46 @@ def scale_all_images(
         cv2.imwrite(image_path, img)
 
 
+def enalrge_masks(
+        target_folder,
+        kernel_size = 2,
+        iterations = 3
+    ):
+    """
+    Method that enlarge all the masks in a folder.
+
+    Args:
+        target_folder (str): the folder containing the masks to enlarge.
+        kernel_size (int): the size of the kernel to use for the dilation.
+        iterations (int): the number of iterations to use for the dilation.
+    """
+    print(f"Dilating masks in {os.path.basename(target_folder)})...")
+
+    kernel = np.ones((kernel_size, kernel_size), np.uint8)
+
+    # map all the images in the folder
+    images = [f for f in os.listdir(target_folder) if f.endswith(".jpg")]
+
+    # iterate over the images and scale them
+    for image in tqdm(images, desc = "Dilating masks"):
+        image_path = os.path.join(target_folder, image)
+        img = cv2.imread(image_path, cv2.IMREAD_GRAYSCALE)
+        img = cv2.dilate(img, kernel, iterations = iterations)
+        cv2.imwrite(image_path, img)
+
 
 if __name__ == "__main__":
 
-    #remove_empty_jsonl(
-    #    dataset_folder = "/home/max/Desktop/Articolo_coigan/COIGAN-IROS-2024/datasets/severstal_steel_defect_dataset/test_IROS2024/tile_train_set",
-    #    out_dataset_folder = "/home/max/Desktop/Articolo_coigan/COIGAN-IROS-2024/datasets/severstal_steel_defect_dataset/test_IROS2024/tile_train_set_filtered"
-    #)
-
+    """
+    remove_empty_jsonl(
+        dataset_folder = "/home/max/Desktop/Articolo_coigan/COIGAN-IROS-2024/datasets/severstal_steel_defect_dataset/test_IROS2024/tile_train_set",
+        out_dataset_folder = "/home/max/Desktop/Articolo_coigan/COIGAN-IROS-2024/datasets/severstal_steel_defect_dataset/test_IROS2024/tile_train_set_filtered"
+    )
+    ""
     targets = [
-        ("/home/max/Desktop/Articolo_coigan/COIGAN-IROS-2024/datasets/Conglomerate Concrete Crack Detection/Train/reduced_cccd/images/data", cv2.INTER_AREA, (256, 256)),
-        #("/home/max/Desktop/Articolo_coigan/COIGAN-IROS-2024/datasets/Conglomerate Concrete Crack Detection/Train/reduced_cccd/masks", cv2.INTER_NEAREST, (256, 256))
+        ("/coigan/COIGAN-IROS-2024/datasets/Conglomerate Concrete Crack Detection/Train/reduced_base_cccd/data", cv2.INTER_AREA, (256, 256)),
+        ("/coigan/COIGAN-IROS-2024/datasets/Conglomerate Concrete Crack Detection/Train/reduced_defect_cccd/images", cv2.INTER_AREA, (256, 256)),
+        ("/coigan/COIGAN-IROS-2024/datasets/Conglomerate Concrete Crack Detection/Train/reduced_defect_cccd/masks", cv2.INTER_NEAREST, (256, 256)),
     ]
     for target in targets:
         scale_all_images(
@@ -110,3 +140,10 @@ if __name__ == "__main__":
             out_tile_size = target[2]
         )
     print("Done!")
+    """
+
+    enalrge_masks(
+        target_folder = "/coigan/COIGAN-IROS-2024/datasets/Conglomerate Concrete Crack Detection/Train/reduced_enlarged_defect_cccd/masks",
+        kernel_size = 2,
+        iterations = 2
+    )

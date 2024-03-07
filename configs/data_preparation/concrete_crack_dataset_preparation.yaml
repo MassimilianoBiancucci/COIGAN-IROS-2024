@@ -14,10 +14,10 @@ dataset_dir: ${repo_dir}/datasets/Conglomerate Concrete Crack Detection
 
 # datasets locations
 zip_file: ${dataset_dir}/severstal-steel-defect-detection.zip
-raw_dataset_dir: ${dataset_dir}/Train/defect_cccd # <--
-jsonl_dataset_dir: ${dataset_dir}/Train/defect_cccd_jsonl # <--
+raw_dataset_dir: ${dataset_dir}/Train/reduced_enlarged_defect_cccd # <--
+jsonl_dataset_dir: ${dataset_dir}/Train/defect_cccd_jsonl_150 # <--
 
-train_set_dir: ${dataset_dir}/Train/defect_cccd_jsonl # <--
+train_set_dir: ${dataset_dir}/Train/defect_cccd_jsonl_150 # <--
 test_set_dir: ${dataset_dir}/${dataset_name}/test_set
 object_datasets_dir: ${dataset_dir}/Train/object_datasets # <--
 base_dataset_dir: ${dataset_dir}/${dataset_name}/base_dataset
@@ -26,8 +26,8 @@ tile_train_set_dir: ${dataset_dir}/${dataset_name}/tile_train_set
 tile_test_set_dir: ${dataset_dir}/${dataset_name}/tile_test_set
 
 # general datapipeline settings
-original_tile_size: [448, 448] # specify the original tile size, (tile_size, tile_size)
-tile_size: [448, 448] # specify the tile size, to split the images from the dataset, (tile_size, tile_size), used only in the tiler
+original_tile_size: [150, 150] # specify the original tile size, (tile_size, tile_size)
+tile_size: [150, 150] # specify the tile size, to split the images from the dataset, (tile_size, tile_size), used only in the tiler
 binary: True
 
 # multiprocessing settings
