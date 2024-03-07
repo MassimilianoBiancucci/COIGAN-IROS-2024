@@ -29,6 +29,22 @@ imgs_preset_1 = sChoice(
 ######################################################################
 ### Interactor augmentation presets
 
+"""
+PRESETS OF TRANSFORMATIONS APPLICABLE TO IMAGES AND MASKS
+Use this augmentation where the masks contain the background class as the last one,
+in this case rotations will generate a 1's border around the mask when it is rotated.
+"""
+mask_defects_bg_preset = dChoice(
+    [
+        dVerticalFlip(p=0.5),
+        dHorizontalFlip(p=0.5),
+        dRotations(35, bg_fill=1),
+        #dAffine(degrees=0.0, translate=0.1, scale=(0.9, 1.1), shear=5.0),
+    ],
+    [1, 2],
+)
+
+
 """PRESETS OF TRANSFORMATIONS APPLICABLE TO IMAGES AND MASKS"""
 mask_defects_preset = dChoice(
     [
@@ -91,6 +107,7 @@ augmentation_presets_dict = {
     "imgs_preset_1": imgs_preset_1,
     "mask_defects_preset": mask_defects_preset,
     "imgs_defects_preset": imgs_defects_preset,
+    "mask_defects_bg_preset": mask_defects_bg_preset,
     "imgs_defects_preset_noop": imgs_defects_preset_noop,
     "mask_inpainting_preset": mask_inpainting_preset,
     "imgs_inpainting_preset": imgs_inpainting_preset,

@@ -14,6 +14,7 @@ from COIGAN.utils.common_utils import make_optimizer, make_lr_scheduler
 from COIGAN.training.logger import DataLogger
 from COIGAN.segmentation.losses.loss_mng import loss_mng
 from COIGAN.segmentation.losses import (
+    focal_loss,
     log_cos_dice,
     F1,
     accuracy,
@@ -24,16 +25,19 @@ from COIGAN.segmentation.losses import (
 
 LOGGER = logging.getLogger(__name__)
 
-thrs = 0.5
-output_classes = ['0', '1', '2', 'bg']
+thrs = 0.6
+#output_classes = ['0', '1', '2', 'bg']
+output_classes = ['0', 'bg']
 input_classes = ['no_damage', 'damage']
 
 losses = {
-    "log_cos_dice": log_cos_dice()
+    #"log_cos_dice": log_cos_dice(),
+    "focal_loss": focal_loss(),
 }
 
 val_losses = {
-    "log_cos_dice": log_cos_dice(),
+    #"log_cos_dice": log_cos_dice(),
+    "focal_loss": focal_loss(),
 }
 
 classic_val_losses = {
@@ -49,8 +53,9 @@ loss_mng_train_conf = {
     "classes": output_classes,
     "input_classes": input_classes,
     "loss_weights": None, #[2.0, 2.0], # None means equal weights, applyed if the class_loss_weight is not defined for a class
-    "classes_weights": None, #[0.3, 1.2, 1.2, 1.1, 1.2], # None means equal weights
-    "input_classes_weights": None #[1.0, 1.0], # None means equal weights
+    "classes_weights": [1.2, 0.1], #[1.2, 1.0, 1.2, 0.03], #    "loss_weights": None, #[2.0, 2.0], # None means equal weights, applyed if the class_loss_weight is not defined for a class
+    #"classes_weights": [1.0, 0.3], #[0.3, 1.2, 1.2, 1.1, 1.2], # None means equal weights
+    "input_classes_weights": [0.01, 1.0] #[1.0, 1.0], # None means equal weights
 }
 loss_mng_val_conf = {
     "losses": val_losses, #{"dice": dice_loss()},
@@ -116,6 +121,7 @@ class SegmentationTrainer:
         os.makedirs(self.config.location.checkpoint_dir, exist_ok=True)
 
         # model, optimizer and learning rate scheduler
+        self.use_softmax = self.config.use_softmax
         self.model = make_segmentation_model(**config.model).to(self.device)
         self.optim = make_optimizer(self.model, **config.optimizers.model)
         self.scheduler = make_lr_scheduler(self.optim, **config.optimizers.lr_scheduler)
@@ -182,15 +188,20 @@ class SegmentationTrainer:
 
                 with torch.no_grad():
                     mask_pred = self.model(imgs)["out"]
-                    mask_pred = torch.softmax(mask_pred, dim=1)
-                    mask_pred = (mask_pred > thrs).float()
+
+                    # Add onehot encoding
+                    #mask_pred = (mask_pred == mask_pred.max(dim=1, keepdim=True)[0]).float()
+
+                    mask_pred_soft = torch.softmax(mask_pred, dim=1)
+                    mask_pred_thrs = (mask_pred_soft > thrs).float()
+
                     self.val_loss_manager(
                         mask_pred, 
                         masks, 
                         in_class
                     )
                     self.classic_val_loss_manager(
-                        mask_pred,
+                        mask_pred_thrs,
                         masks,
                         in_class
                     )
@@ -237,9 +248,10 @@ class SegmentationTrainer:
 
                     with torch.cuda.amp.autocast(enabled=self.amp):
                         output = self.model(imgs)["out"]
-                        output = torch.softmax(output, dim=1)
-                        loss = self.loss_manager(output, masks, in_class)
-                    
+
+                    #if self.use_softmax: output = torch.softmax(output, dim=1)
+                    loss = self.loss_manager(output, masks, in_class)
+
                     self.optim.zero_grad()
                     self.grad_scaler.scale(loss).backward()
                     self.grad_scaler.step(self.optim)
@@ -280,7 +292,7 @@ class SegmentationTrainer:
                         # in this section the outut tensor [b, cls, h, w] is converted into
                         # cls tensors with shape [b, h, w] and then the make_grid function is used for each one
                         for i, cls in enumerate(output_classes):
-                            
+                            output = torch.sigmoid(output)
                             visual_logs[f"out_{cls}"] = self.make_grid(output[:, i, :, :].unsqueeze(1))
                             visual_logs[f"gt_mask_{cls}"] = self.make_grid(masks[:, i, :, :].unsqueeze(1))
                         

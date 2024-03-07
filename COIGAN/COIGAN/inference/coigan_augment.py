@@ -100,19 +100,23 @@ class COIGANaugment:
 
         LOGGER.info("Starting the augmentation process..")
         aug_idx = 0 # index of the augmented images
-        pbar = tqdm(total = self.n_extra_samples // self.batch_size)
+        pbar = tqdm(total = self.n_extra_samples)
         while True:
             # inference on the next sample
             sample = next(self.dataloader)
-            masks = sample["orig_gen_input_masks"]
+            t_masks = sample["orig_gen_input_masks"]
             inpainted_img = self.model(sample["gen_input"])
             
+            # convert the masks to numpy, reordering the channels
+            # shape: (batch, cls, h, w) -> (batch, h, w, cls)
+            batch_masks = t_masks.permute(0, 2, 3, 1).numpy().astype("uint8")
+
             # save the inpainted image in the target folder
-            for i in inpainted_img.shape[0]:
+            for i in range(len(inpainted_img)):
                 # extracting the image and the masks from the batch
                 img = inpainted_img[i]
-                masks = masks[i]
-                
+                masks = batch_masks[i]
+
                 # preprocess the image and the masks
                 # NOTE: the preprocess method return a list of images and a list of metadata 
                 images, metadata_lst = preprocess(img, masks, self.tile_size)

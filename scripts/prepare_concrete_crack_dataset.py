@@ -459,7 +459,7 @@ def create_tile_datasets(config: DictConfig):
     ).convert()
 
 
-@hydra.main(config_path='../configs/data_preparation', config_name='debug_concrete_crack_dataset_preparation.yaml', version_base="1.1")
+@hydra.main(config_path='../configs/data_preparation', config_name='concrete_crack_dataset_preparation_test.yaml', version_base="1.1")
 def main(config: DictConfig):
     """
         Script that load the Severstal steel defect dataset and prepare it for the trianing pipeline.
@@ -489,7 +489,7 @@ def main(config: DictConfig):
     convert_severstal_dataset_to_jsonl(config)
 
     # 3.1 - create report of the dataset
-    #create_severstal_dataset_report(config)
+    create_severstal_dataset_report(config)
 
     # 4 - split the dataset in train and test set
     #split_dataset(config)
@@ -498,7 +498,7 @@ def main(config: DictConfig):
     #create_splits_reports(config)
 
     # 5 - Create the defects datasets to train the COIGAN model to inpaint the defects and stylegan to generate new masks, from the train dataset
-    create_object_datasets(config)
+    #create_object_datasets(config)
 
     # 5.1 - create the reports for the object datasets
     #create_object_datasets_reports(config)

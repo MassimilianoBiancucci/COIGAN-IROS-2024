@@ -24,7 +24,8 @@ class JsonLineDatasetSegm(JsonLineDatasetMasksOnly):
         metadata_file_path: str,
         index_file_path: str,
         classes: List[str],
-        background_class: bool = True,
+        background_class: bool = False,
+        collapse_classes: bool = False,
         augmentor: Augmentor = None,
         masks_fields: List[str] = ["polygons"],
         mask_value: int = 1,
@@ -65,6 +66,7 @@ class JsonLineDatasetSegm(JsonLineDatasetMasksOnly):
         self.augmentor = augmentor
         self.mask_value = mask_value
         self.background_class = background_class
+        self.collapse_classes = collapse_classes
 
         # check if the image folder exists
         if not os.path.isdir(self.image_folder_path):
@@ -88,7 +90,10 @@ class JsonLineDatasetSegm(JsonLineDatasetMasksOnly):
         fill = 0
 
         # create the final tensor with the classes as channels
-        n_classes = len(self.classes) if not self.background_class else len(self.classes) + 1
+        # the number of chnnels depend on the dataloader settings
+        n_classes = len(self.classes) if not self.collapse_classes else 1
+        if self.background_class: n_classes += 1
+
         final_masks = np.zeros((n_classes, self.size[0], self.size[1]), dtype=np.uint8)
         if self.background_class: bg_mask = np.ones((self.size[0], self.size[1]), dtype=np.uint8)
 
@@ -97,7 +102,12 @@ class JsonLineDatasetSegm(JsonLineDatasetMasksOnly):
             for field in self.masks_fields:
                 if _class in masks[field]:
                     fill = 1
-                    final_masks[self.classes.index(_class), :, :] = masks[field][_class]
+                    if not self.collapse_classes:
+                        final_masks[self.classes.index(_class), :, :] = masks[field][_class]
+                    else:
+                        # bitwise or to merge the masks
+                        final_masks[0, :, :] = np.bitwise_or(final_masks[0, :, :], masks[field][_class])
+                        
                     if self.background_class: bg_mask -= masks[field][_class]
         
         if self.background_class:

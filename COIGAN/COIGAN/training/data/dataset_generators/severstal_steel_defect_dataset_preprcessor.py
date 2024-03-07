@@ -327,7 +327,7 @@ class SeverstalSteelDefectPreprcessor(JsonLineDatasetBaseGenerator):
         reduction_factor=4, 
         normalize=False, 
         min_poly_points=25,
-        min_allowed_poly_points=5,
+        min_allowed_poly_points=25,
         check_validity=True
     ):
         """

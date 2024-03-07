@@ -14,12 +14,12 @@ dataset_dir: ${repo_dir}/datasets/Conglomerate Concrete Crack Detection
 
 # datasets locations
 zip_file: ${dataset_dir}/severstal-steel-defect-detection.zip
-raw_dataset_dir: ${dataset_dir}/Train/reduced_enlarged_orig_cccd # <--
-jsonl_dataset_dir: ${dataset_dir}/Train/orig_cccd_jsonl # <--
+raw_dataset_dir: ${dataset_dir}/Test/reduced_enlarged_orig_cccd # <--
+jsonl_dataset_dir: ${dataset_dir}/Test/test_orig_cccd_jsonl # <--
 
-train_set_dir: ${dataset_dir}/Train/orig_cccd_jsonl # <--
+train_set_dir: ${dataset_dir}/Train/test_defect_cccd_jsonl
 test_set_dir: ${dataset_dir}/${dataset_name}/test_set
-object_datasets_dir: ${dataset_dir}/Train/object_datasets # <--
+object_datasets_dir: ${dataset_dir}/Train/object_datasets
 base_dataset_dir: ${dataset_dir}/${dataset_name}/base_dataset
 
 tile_train_set_dir: ${dataset_dir}/${dataset_name}/tile_train_set
@@ -31,7 +31,7 @@ tile_size: [256, 256] # specify the tile size, to split the images from the data
 binary: True
 
 # multiprocessing settings
-n_workers: 24 # -1 means all the available cpus
+n_workers: 1 #24 # -1 means all the available cpus
 q_size: 12
 
 # settings for the dataset converter
