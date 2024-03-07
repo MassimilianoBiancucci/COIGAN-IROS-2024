@@ -501,7 +501,7 @@ def main(config: DictConfig):
     #create_object_datasets(config)
 
     # 5.1 - create the reports for the object datasets
-    #create_object_datasets_reports(config)
+    create_object_datasets_reports(config)
 
     # 6 - create the none defected img dataset to train another stylegan, to generate new none defected images
     #create_base_dataset(config)

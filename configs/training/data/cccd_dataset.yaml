@@ -1,6 +1,6 @@
 
 dataset_name: severstal-steel-defect # name of the dataset
-dataset_location: ${location.project_home}/datasets/Conglomerate Concrete Crack Detection
+dataset_location: ${location.project_home}/datasets/Conglomerate Concrete Crack Detection/Train
 
 out_size: 256 # size of dataset
 batch_size: ${batch_size} # batch size for each training process
@@ -28,15 +28,15 @@ augmentation_sets:
 
 # position of the base dataset
 base_dataset_kwargs:
-  root: ${data.dataset_location}/Train/base_cccd
+  root: ${data.dataset_location}/reduced_base_cccd
 
 ref_dataset_kwargs:
-  root: ${data.dataset_location}/Train/orig_cccd
+  root: ${data.dataset_location}/reduced_base_cccd
 
 # objects datasets parameters
 object_datasets:
   # position of the object datasets and name of each subfolder (class)
-  base_path: ${data.dataset_location}/Train/object_datasets
+  base_path: ${data.dataset_location}/object_datasets
   names: 
     - object_dataset_0
     #- object_dataset_1
@@ -54,13 +54,13 @@ object_datasets:
 shape_dataloader_kwargs:
   sample_shapes: [1]
   shape_probs: [1.0]
-  tile_size: 448
+  tile_size: ${data.out_size}
 
 # object dataloader parameters
 object_dataloader_kwargs:
   sample_defects: [1]
   defects_probs: [1.0]
-  tile_size: 448
+  tile_size: ${data.out_size}
 
 coigan_dataset_kwargs:
   allow_overlap: ${data.allow_overlap} # allow overlap between objects in input masks and on the gt objects
