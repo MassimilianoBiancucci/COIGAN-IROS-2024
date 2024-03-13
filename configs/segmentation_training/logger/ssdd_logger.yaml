@@ -8,7 +8,7 @@ log_weights_interval: ${log_weights_interval}
 # wandb
 enable_wandb: ${enable_wandb} # enable wandb logging, if False 
 wandb_kwargs:
-  project: Unet-severstal-IROS-2024
+  project: Segm-severstal-filtered-IROS-2024
   entity: deep_learning_team
   mode: online
 

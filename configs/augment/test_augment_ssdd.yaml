@@ -16,7 +16,7 @@ output_dataset_folder: ${location.project_home}/datasets/severstal_steel_defect_
 output_dataset_binary: True
 
 tile_size: # size of the tiles to generate (h, w)
-  - 256 
+  - 256
   - 256
 
 batch_size: 8 # batch size for the coigan generator
@@ -43,5 +43,5 @@ distributed: False # DO NOT CHANGE, the distributed option is not implemented fo
 defaults:
   - data: severstal_dataset
   - location: default_locations
-  - generator: ffc_resnet_075_cccd
+  - generator: ffc_resnet_075_ssdd
   - hydra: overrides

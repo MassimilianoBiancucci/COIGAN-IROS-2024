@@ -159,12 +159,12 @@ def create_dataset_report(
 
 if __name__ == "__main__":
 
-    """
-    remove_empty_jsonl(
-        dataset_folder = "/coigan/COIGAN-IROS-2024/datasets/severstal_steel_defect_dataset/test_IROS2024/tile_train_set",
-        out_dataset_folder = "/coigan/COIGAN-IROS-2024/datasets/severstal_steel_defect_dataset/test_IROS2024/tile_train_set_filtered"
-    )
     ""
+    remove_empty_jsonl(
+        dataset_folder = "/coigan/COIGAN-IROS-2024/datasets/severstal_steel_defect_dataset/test_IROS2024/tile_test_set",
+        out_dataset_folder = "/coigan/COIGAN-IROS-2024/datasets/severstal_steel_defect_dataset/test_IROS2024/tile_test_set_filtered"
+    )
+    """
     targets = [
         ("/coigan/COIGAN-IROS-2024/datasets/Conglomerate Concrete Crack Detection/Train/reduced_enlarged_orig_cccd/images/data", cv2.INTER_AREA, (256, 256)),
         #("/coigan/COIGAN-IROS-2024/datasets/Conglomerate Concrete Crack Detection/Train/reduced_defect_cccd/images", cv2.INTER_AREA, (256, 256)),
@@ -186,6 +186,7 @@ if __name__ == "__main__":
     )
     """
 
-    create_dataset_report("/coigan/COIGAN-IROS-2024/datasets/severstal_steel_defect_dataset/test_IROS2024/tile_train_set_filtered")
+    create_dataset_report("/coigan/COIGAN-IROS-2024/datasets/severstal_steel_defect_dataset/test_IROS2024/tile_test_set_filtered")
 
     ""
+    

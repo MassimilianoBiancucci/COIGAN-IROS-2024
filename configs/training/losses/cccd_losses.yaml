@@ -14,18 +14,18 @@ generator_losses:
   # same as l1 but with a smooth mask applied to change weight
   # near and over the objects
   l1_smooth_masked:
-    weight: 10 # overall weight of the loss
+    weight: 8 # overall weight of the loss
     kwargs:
       channels: ${data.object_datasets.n} # number of channels of the mask, equal to the number of classes
-      obj_weight: 0 # weight of the loss in the object area
+      obj_weight: 0.0 # weight of the loss in the object area
       bg_weight: 1.0 # weight of the loss in the background area
-      kernel_size: 11 # size of the linear kernel used to smooth the mask
+      kernel_size: 7 # size of the linear kernel used to smooth the mask
 
   adversarial:
-    weight: 6.0
+    weight: 10.0
 
   ref_adversarial:
-    weight: 0.25
+    weight: 0.1
 
   resnet_pl:
     weight: 0
@@ -35,13 +35,13 @@ generator_losses:
   # same as resnet_pl but with a smooth mask applied to change weight 
   # near and over the objects
   resnet_pl_smooth_masked:
-    weight: 0.004
+    weight: 0.01
     kwargs:
       channels: ${data.object_datasets.n} # number of channels of the mask, equal to the number of classes
       weights_path: ${location.loss_models}
-      obj_weight: 1.0 # weight of the loss in the object area
-      bg_weight: 0.0 # weight of the loss in the background area
-      kernel_size: 13 # size of the linear kernel used to smooth the mask
+      obj_weight: 0.99 # weight of the loss in the object area
+      bg_weight: 0.01 # weight of the loss in the background area
+      kernel_size: 41 # size of the linear kernel used to smooth the mask
 
 # genrator regularitions
 generator_reg:
@@ -54,7 +54,7 @@ generator_reg:
 ### Discriminator losses parameters
 discriminator_losses:
   logistic:
-    weight: 2
+    weight: 1
 
 # discriminator regularitions
 discriminator_reg: # TODO sistema i parametri
@@ -66,7 +66,7 @@ discriminator_reg: # TODO sistema i parametri
 ### Discriminator losses parameters
 ref_discriminator_losses:
   logistic:
-    weight: 2
+    weight: 1
 
 # discriminator regularitions
 ref_discriminator_reg: # TODO sistema i parametri

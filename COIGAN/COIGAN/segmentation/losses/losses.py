@@ -8,7 +8,7 @@ class dice_loss:
 
     std_conf = {
         "epsilon": 1e-6,
-        "applay_sigmoid": True
+        "applay_sigmoid": False
     }
 
     def __init__(self, config=None):

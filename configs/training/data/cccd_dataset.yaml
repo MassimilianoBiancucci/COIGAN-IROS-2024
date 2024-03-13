@@ -52,14 +52,14 @@ object_datasets:
 
 # shape dataloader parameters
 shape_dataloader_kwargs:
-  sample_shapes: [1]
-  shape_probs: [1.0]
+  sample_shapes: [1, 2, 3]
+  shape_probs: [0.7, 0.2, 0.1]
   tile_size: ${data.out_size}
 
 # object dataloader parameters
 object_dataloader_kwargs:
-  sample_defects: [1]
-  defects_probs: [1.0]
+  sample_defects: [1, 2, 3]
+  defects_probs: [0.7, 0.2, 0.1]
   tile_size: ${data.out_size}
 
 coigan_dataset_kwargs:

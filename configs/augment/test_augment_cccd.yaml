@@ -5,13 +5,13 @@ run_name: ${conf_name}_${now:%d-%m-%Y_%H-%M-%S}
 device: cuda:0
 
 # path to the checkpoint file to load and the input output dataset folders
-checkpoint_path: ${location.project_home}/models/190000.pt
+checkpoint_path: ${location.project_home}/experiments/COIGAN_cccd_test_10-03-2024_02-09-36/checkpoints/640000.pt
 
 # input and output dataset folders and parameters
-input_dataset_folder: ${location.project_home}/
+input_dataset_folder: ${location.project_home}/datasets/cccd/Train/orig_cccd_jsonl
 input_dataset_binary: True
 
-output_dataset_folder: ${location.project_home}/
+output_dataset_folder: ${location.project_home}/datasets/cccd/Train/orig_cccd_jsonl_ckpt640k_3k5smpl
 output_dataset_binary: True
 
 tile_size: # size of the tiles to generate (h, w)
@@ -21,6 +21,9 @@ tile_size: # size of the tiles to generate (h, w)
 batch_size: 16 # batch size for the coigan generator
 num_workers: 8 # dataloader workers
 prefetch: 4
+
+# augmentation parameters
+n_extra_samples: 3500 # number of extra samples to generate (out_dataset_len = n_extra_samples + len(input_dataset))
 
 # other data preparation params
 mask_base_img: False # If true zero out the base image where the concat masks are 1s, for the input_base_img and for the generator output

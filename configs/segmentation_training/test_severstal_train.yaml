@@ -21,7 +21,7 @@ distributed: False # Do not touch distributed not implemented in Segmentation ye
 
 enable_wandb: True # True # enable wandb logging, if False no logging will be performed on the cloud
 log_img_interval: 1000 # steps interval between each output visualization
-log_weights_interval: 2000 # steps interval between each weights visualization
+log_weights_interval: 0 # steps interval between each weights visualization
 checkpoint_interval: 1000 # steps interval between each checkpoint
 
 
