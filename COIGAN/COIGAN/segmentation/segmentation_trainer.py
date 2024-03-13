@@ -32,14 +32,14 @@ output_classes = ['0', 'bg']
 input_classes = ['no_damage', 'damage']
 
 losses = {
-    "dice_loss": dice_loss(),
-    #"log_cos_dice": log_cos_dice(),
+    #"dice_loss": dice_loss(),
+    "log_cos_dice": log_cos_dice(),
     #"focal_loss": focal_loss(),
 }
 
 val_losses = {
-    "dice_loss": dice_loss(),
-    #"log_cos_dice": log_cos_dice(),
+    #"dice_loss": dice_loss(),
+    "log_cos_dice": log_cos_dice(),
     #"focal_loss": focal_loss(),
 }
 
@@ -109,9 +109,11 @@ class SegmentationTrainer:
         self.checkpoint_interval = self.config.checkpoint_interval # number of epochs between each checkpoint saving
 
         # number of samples
-        self.n_train = len(dataloader.dataset) # number of training samples
+        if dataloader is not None: 
+            self.n_train = len(dataloader.dataset) # number of training samples
+            self.n_train_batches = self.n_train // self.batch_size # number of training batches
+
         self.n_val = len(val_dataloader.dataset) # number of validation samples
-        self.n_train_batches = self.n_train // self.batch_size # number of training batches
         self.n_val_batches = self.n_val // self.batch_size # number of validation batches
         
         # device and amp

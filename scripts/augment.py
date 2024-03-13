@@ -12,7 +12,8 @@ from COIGAN.inference.coigan_augment import COIGANaugment
 LOGGER = logging.getLogger(__name__)
 
 #conf_file  = "test_augment_ssdd.yaml"
-conf_file  = "test_augment_cccd.yaml"
+#conf_file  = "test_augment_cccd.yaml"
+conf_file = "test_augment_bridge.yaml"
 
 @hydra.main(config_path="../configs/augment/", config_name=conf_file, version_base="1.1")
 def main(config: OmegaConf):

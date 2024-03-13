@@ -11,6 +11,7 @@ checkpoint_path: ${location.project_home}/experiments/COIGAN_severstal_run_check
 # input and output dataset folders and parameters
 input_dataset_folder: ${location.project_home}/datasets/severstal_steel_defect_dataset/test_IROS2024/tile_train_set_filtered
 input_dataset_binary: True
+copy_source_dataset: True
 
 output_dataset_folder: ${location.project_home}/datasets/severstal_steel_defect_dataset/test_IROS2024/aug_tile_train_set_filtered_ckpt580k_5ksmpl
 output_dataset_binary: True

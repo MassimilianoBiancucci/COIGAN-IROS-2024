@@ -1,0 +1,36 @@
+conf_name: Segmentation_bridge_eval_test
+run_name: ${conf_name}_${now:%d-%m-%Y_%H-%M-%S}
+
+# training variables
+checkpoint: /coigan/COIGAN-IROS-2024/experiments/Segmentation_severstal_test_13-03-2024_00-07-24/checkpoints/99_117000.pt # path to the checkpoint file to load
+
+epochs: 100
+batch_size: 12
+num_workers: 12
+prefetch: 24
+
+val_interval: 1000 # validation interval in steps (batches)
+
+device: cuda:0 # device to use for training
+amp: False # enable automatic mixed precision
+use_softmax: False # if True, the model output will be passed through a softmax layer
+
+################################################
+distributed: False # Do not touch distributed not implemented in Segmentation yet, variable still necessary for the dataloader
+################################################
+
+enable_wandb: True # True # enable wandb logging, if False no logging will be performed on the cloud
+log_img_interval: 1000 # steps interval between each output visualization
+log_weights_interval: 0 # steps interval between each weights visualization
+checkpoint_interval: 1000 # steps interval between each checkpoint
+
+
+defaults:
+  - location: default_locations
+  - data: bridge_ssdd_aug_dataset
+  - model: fcn_resnet50_ssdd
+  - optimizers: ssdd_optimizers
+  - losses: default_losses
+  - logger: bridge_ssdd_eval_logger
+  - evaluator: default_evaluator
+  - hydra: overrides
