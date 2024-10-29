@@ -20,7 +20,8 @@ from COIGAN.utils.ddp_utils import ddp_setup
 LOGGER = logging.getLogger(__name__)
 
 #conf_file  = "test_train.yaml"
-conf_file  = "test_train_cccd.yaml"
+#conf_file  = "test_train_cccd.yaml"
+conf_file = "test_train_no_sm.yaml"
 
 @hydra.main(config_path="../configs/training/", config_name=conf_file, version_base="1.1")
 def main(config: OmegaConf):

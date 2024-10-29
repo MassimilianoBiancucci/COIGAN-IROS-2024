@@ -6,7 +6,7 @@ project_home: /coigan/COIGAN-IROS-2024
 #####################################################################################
 
 data_root_dir: ${data.dataset_location}
-out_root_dir: ${location.project_home}/experiments
+out_root_dir: ${location.project_home}/experiments/${conf_name}
 
 experiment_path: ${location.out_root_dir}/${run_name}
 checkpoint_dir: ${location.experiment_path}/checkpoints

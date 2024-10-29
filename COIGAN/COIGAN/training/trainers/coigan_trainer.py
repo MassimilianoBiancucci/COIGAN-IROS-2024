@@ -279,7 +279,7 @@ class COIGANtrainer:
                 fake_image = self.generator(gen_in)
                 
                 #----> extract defects from generated
-                # TODO add setting to manage if extract the defects or not before passing it to the discriminator
+                # TODO: add setting to manage if extract the defects or not before passing it to the discriminator
                 disc_in_fake = self.extract_defects(fake_image, gen_in_orig_masks)
                 
                 #----> compute the discriminator outputs for the real and fake images
