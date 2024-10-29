@@ -16,6 +16,7 @@ from COIGAN.segmentation.losses.loss_mng import loss_mng
 from COIGAN.segmentation.losses import (
     focal_loss,
     log_cos_dice,
+    dice_loss,
     F1,
     accuracy,
     precision,
@@ -31,13 +32,15 @@ output_classes = ['0', 'bg']
 input_classes = ['no_damage', 'damage']
 
 losses = {
-    #"log_cos_dice": log_cos_dice(),
-    "focal_loss": focal_loss(),
+    #"dice_loss": dice_loss(),
+    "log_cos_dice": log_cos_dice(),
+    #"focal_loss": focal_loss(),
 }
 
 val_losses = {
-    #"log_cos_dice": log_cos_dice(),
-    "focal_loss": focal_loss(),
+    #"dice_loss": dice_loss(),
+    "log_cos_dice": log_cos_dice(),
+    #"focal_loss": focal_loss(),
 }
 
 classic_val_losses = {
@@ -106,9 +109,11 @@ class SegmentationTrainer:
         self.checkpoint_interval = self.config.checkpoint_interval # number of epochs between each checkpoint saving
 
         # number of samples
-        self.n_train = len(dataloader.dataset) # number of training samples
+        if dataloader is not None: 
+            self.n_train = len(dataloader.dataset) # number of training samples
+            self.n_train_batches = self.n_train // self.batch_size # number of training batches
+
         self.n_val = len(val_dataloader.dataset) # number of validation samples
-        self.n_train_batches = self.n_train // self.batch_size # number of training batches
         self.n_val_batches = self.n_val // self.batch_size # number of validation batches
         
         # device and amp
@@ -249,7 +254,7 @@ class SegmentationTrainer:
                     with torch.cuda.amp.autocast(enabled=self.amp):
                         output = self.model(imgs)["out"]
 
-                    #if self.use_softmax: output = torch.softmax(output, dim=1)
+                    output = torch.softmax(output, dim=1)
                     loss = self.loss_manager(output, masks, in_class)
 
                     self.optim.zero_grad()
@@ -292,7 +297,7 @@ class SegmentationTrainer:
                         # in this section the outut tensor [b, cls, h, w] is converted into
                         # cls tensors with shape [b, h, w] and then the make_grid function is used for each one
                         for i, cls in enumerate(output_classes):
-                            output = torch.sigmoid(output)
+                            #output = torch.sigmoid(output)
                             visual_logs[f"out_{cls}"] = self.make_grid(output[:, i, :, :].unsqueeze(1))
                             visual_logs[f"gt_mask_{cls}"] = self.make_grid(masks[:, i, :, :].unsqueeze(1))
                         

@@ -1,8 +1,8 @@
-conf_name: Segmentation_severstal_test
+conf_name: Segmentation_bridge_eval_test
 run_name: ${conf_name}_${now:%d-%m-%Y_%H-%M-%S}
 
 # training variables
-checkpoint: null # path to the checkpoint file to load
+checkpoint: /coigan/COIGAN-IROS-2024/experiments/Segmentation_severstal_test_13-03-2024_00-07-24/checkpoints/99_117000.pt # path to the checkpoint file to load
 
 epochs: 100
 batch_size: 12
@@ -27,10 +27,10 @@ checkpoint_interval: 1000 # steps interval between each checkpoint
 
 defaults:
   - location: default_locations
-  - data: severstal_dataset
+  - data: bridge_ssdd_aug_dataset
   - model: fcn_resnet50_ssdd
   - optimizers: ssdd_optimizers
   - losses: default_losses
-  - logger: ssdd_logger
+  - logger: bridge_ssdd_eval_logger
   - evaluator: default_evaluator
   - hydra: overrides

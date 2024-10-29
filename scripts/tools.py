@@ -161,8 +161,8 @@ if __name__ == "__main__":
 
     """
     remove_empty_jsonl(
-        dataset_folder = "/coigan/COIGAN-IROS-2024/datasets/severstal_steel_defect_dataset/test_IROS2024/tile_train_set",
-        out_dataset_folder = "/coigan/COIGAN-IROS-2024/datasets/severstal_steel_defect_dataset/test_IROS2024/tile_train_set_filtered"
+        dataset_folder = "/coigan/COIGAN-IROS-2024/datasets/severstal_steel_defect_dataset/test_IROS2024/tile_test_set",
+        out_dataset_folder = "/coigan/COIGAN-IROS-2024/datasets/severstal_steel_defect_dataset/test_IROS2024/tile_test_set_filtered"
     )
     ""
     targets = [
@@ -186,6 +186,7 @@ if __name__ == "__main__":
     )
     """
 
-    create_dataset_report("/coigan/COIGAN-IROS-2024/datasets/severstal_steel_defect_dataset/test_IROS2024/tile_train_set_filtered")
+    create_dataset_report("/coigan/COIGAN-IROS-2024/datasets/cccd/Train/orig_cccd_jsonl_ckpt640k_3k5smpl")
 
     ""
+    

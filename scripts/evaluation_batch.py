@@ -61,7 +61,7 @@ def generate_inference_dataset(
                 return
 
 
-@hydra.main(config_path="../configs/evaluation/", config_name="test_eval_batch.yaml", version_base="1.1")
+@hydra.main(config_path="../configs/evaluation/", config_name="test_eval_batch_cccd.yaml", version_base="1.1")
 def main(config: OmegaConf):
 
     #resolve the config inplace
@@ -72,7 +72,6 @@ def main(config: OmegaConf):
     # save ghe config in the output folder
     OmegaConf.save(config, os.path.join(os.getcwd(), 'config.yaml')) # saving the configs to config.hydra.run.dir
 
-
     # Calcultaing the reference FID between the train and test datasets
     LOGGER.info("Calculating the reference FID...")
 
@@ -82,7 +81,7 @@ def main(config: OmegaConf):
         config.inc_batch_size,
         config.device,
         config.inception_dims,
-        n_imgs= 37084, # number of images in the base dataset
+        n_imgs= 1305, # number of images in the base dataset
     )
     LOGGER.info(f"Ref FID: {ref_fid}")
 

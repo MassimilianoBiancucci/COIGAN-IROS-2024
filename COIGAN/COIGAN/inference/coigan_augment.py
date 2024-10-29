@@ -38,13 +38,14 @@ class COIGANaugment:
         self.config = config
 
         # augmentation parameters
+        self.copy_source_dataset = config.copy_source_dataset
         self.tile_size = config.tile_size
         self.batch_size = config.batch_size
         self.n_extra_samples = config.n_extra_samples
         self.input_dataset_folder = config.input_dataset_folder
         self.output_dataset_folder = config.output_dataset_folder
 
-        self.input_dataset_image_folder = os.path.join(self.input_dataset_folder, "data")
+        if self.copy_source_dataset: self.input_dataset_image_folder = os.path.join(self.input_dataset_folder, "data")
         self.output_dataset_image_folder = os.path.join(self.output_dataset_folder, "data")
         
         # load the dataloader
@@ -54,12 +55,13 @@ class COIGANaugment:
         self.model = COIGANinference(config)
 
         # load source dataset
-        self.input_dataset = JsonLineDatasetBase(
-            metadata_file_path = os.path.join(self.input_dataset_folder, "dataset.jsonl"),
-            index_file_path = os.path.join(self.input_dataset_folder, "index"),
-            binary = True
-        )
-        self.input_dataset.on_worker_init()
+        if self.copy_source_dataset:
+            self.input_dataset = JsonLineDatasetBase(
+                metadata_file_path = os.path.join(self.input_dataset_folder, "dataset.jsonl"),
+                index_file_path = os.path.join(self.input_dataset_folder, "index"),
+                binary = True
+            )
+            self.input_dataset.on_worker_init()
 
         # create the dataset generator
         self.dataset_generator = JsonLineDatasetBaseGenerator(
@@ -96,7 +98,7 @@ class COIGANaugment:
         Method to augment the dataset.
         """
         # before the augmentation launch the copy source method
-        self.copy_source()
+        if self.copy_source_dataset: self.copy_source()
 
         LOGGER.info("Starting the augmentation process..")
         aug_idx = 0 # index of the augmented images

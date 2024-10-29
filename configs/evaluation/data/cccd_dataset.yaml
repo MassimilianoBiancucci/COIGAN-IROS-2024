@@ -1,6 +1,6 @@
 
 dataset_name: severstal-steel-defect # name of the dataset
-dataset_location: ${location.project_home}/datasets/cccd/Train
+dataset_location: ${location.project_home}/datasets/Conglomerate Concrete Crack Detection/Train
 
 out_size: 256 # size of dataset
 batch_size: ${batch_size} # batch size for each training process
@@ -10,7 +10,7 @@ seed: 42 # seed for the dataset shuffling
 
 # enable the usage of the reference discriminator
 # so in the dataset creation load the relative datasets
-use_ref_disc: false # DO NOT CHANGE, the reference discriminator is not needed in the augmentation process
+use_ref_disc: ${use_ref_disc}
 
 # Setting that enable a beahvior that generate for the same sample different shapes in input to the generator
 # and defects in input to the discriminator.
