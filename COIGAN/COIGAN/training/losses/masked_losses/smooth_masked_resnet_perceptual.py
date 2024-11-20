@@ -51,7 +51,7 @@ class ResNetPLSmoothMasked(nn.Module):
 
         self.device = device
 
-        self.kernel_size = kernel_size
+        self.kernel_size = kernel_size if kernel_size % 2 == 1 else kernel_size + 1
         self.kernel = torch.ones(1, self.channels, self.kernel_size, self.kernel_size, device=self.device) / (self.kernel_size ** 2)
         self.interpolation_mode = 'bilinear' if self.kernel_size > 1 else 'nearest'
         self.allign_corners = True if self.kernel_size > 1 else None
