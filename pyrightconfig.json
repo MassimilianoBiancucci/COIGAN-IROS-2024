@@ -1,0 +1,9 @@
+{
+    "include": [
+        "scripts",
+        "COIGAN"
+    ],
+    "exclude": [
+        ".git",
+    ]
+}

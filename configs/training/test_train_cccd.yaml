@@ -17,8 +17,11 @@ gen_steps: 1 # define how many steps to train the generator before give the turn
 disc_steps: 1 # define how many steps to train the discriminator before give the turn to the generator
 
 ref_disc_steps_delay: 1 # define every how many defect discriminator's steps the reference discriminator is trained, es.(2 -> train once the reference discriminator every 2 steps of the defect discriminator)
+<<<<<<< HEAD
 
 
+=======
+>>>>>>> main
 
 use_g_ema: True # use exponential moving average for the generator
 use_ref_disc: True # use the reference discriminator for the generator training
