@@ -47,12 +47,12 @@ RUN echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/g
 RUN apt update
 RUN apt install gh -y
 
-#enviroment definiscion
+#enviroment definition
 ENV APPDIR coigan
 WORKDIR coigan
 
 # just a trigger to download the repo again without using the cache
-RUN echo "modify this string to download the new version of the repo 0003"
+RUN echo "modify this string to download the new version of the repo 0006"
 
 #DEBUG ENV VARIABLES
 ENV HYDRA_FULL_ERROR=1
@@ -84,9 +84,9 @@ RUN wandb login ${WANDB_API_KEY}
 RUN python3 /coigan/COIGAN-IROS-2024/scripts/download_models_loss.py
 
 # Setting up the jupyter notebook
-RUN pip install jupyterlab
+#RUN pip install jupyterlab
 
-RUN mkdir /notebooks
+#RUN mkdir /notebooks
 #CMD jupyter notebook --no-browser --ip 0.0.0.0 --port 8888  --allow-root /notebooks
 
 #ENTRYPOINT [ "tail", "-f", "/dev/null" ]
