@@ -14,26 +14,15 @@ generator_losses:
   # same as l1 but with a smooth mask applied to change weight
   # near and over the objects
   l1_smooth_masked:
-<<<<<<< HEAD
-    weight: 8 # overall weight of the loss
-=======
     weight: 13 # overall weight of the loss
->>>>>>> main
     kwargs:
       channels: ${data.object_datasets.n} # number of channels of the mask, equal to the number of classes
       obj_weight: 0.0 # weight of the loss in the object area
       bg_weight: 1.0 # weight of the loss in the background area
-<<<<<<< HEAD
-      kernel_size: 7 # size of the linear kernel used to smooth the mask
-
-  adversarial:
-    weight: 10.0
-=======
       kernel_size: 17 # size of the linear kernel used to smooth the mask
 
   adversarial:
     weight: 6
->>>>>>> main
 
   ref_adversarial:
     weight: 0.1
@@ -46,15 +35,6 @@ generator_losses:
   # same as resnet_pl but with a smooth mask applied to change weight 
   # near and over the objects
   resnet_pl_smooth_masked:
-<<<<<<< HEAD
-    weight: 0.01
-    kwargs:
-      channels: ${data.object_datasets.n} # number of channels of the mask, equal to the number of classes
-      weights_path: ${location.loss_models}
-      obj_weight: 0.99 # weight of the loss in the object area
-      bg_weight: 0.01 # weight of the loss in the background area
-      kernel_size: 41 # size of the linear kernel used to smooth the mask
-=======
     weight: 0.008
     kwargs:
       channels: ${data.object_datasets.n} # number of channels of the mask, equal to the number of classes
@@ -62,7 +42,6 @@ generator_losses:
       obj_weight: 1.0 # weight of the loss in the object area
       bg_weight: 0.0 # weight of the loss in the background area
       kernel_size: 17 # size of the linear kernel used to smooth the mask
->>>>>>> main
 
 # genrator regularitions
 generator_reg:
@@ -75,11 +54,7 @@ generator_reg:
 ### Discriminator losses parameters
 discriminator_losses:
   logistic:
-<<<<<<< HEAD
-    weight: 1
-=======
     weight: 2
->>>>>>> main
 
 # discriminator regularitions
 discriminator_reg: # TODO sistema i parametri
@@ -91,11 +66,7 @@ discriminator_reg: # TODO sistema i parametri
 ### Discriminator losses parameters
 ref_discriminator_losses:
   logistic:
-<<<<<<< HEAD
-    weight: 1
-=======
     weight: 2
->>>>>>> main
 
 # discriminator regularitions
 ref_discriminator_reg: # TODO sistema i parametri
